@@ -75,6 +75,7 @@ local.properties
 *.class
 *.log
 
+*/target/*
 
 # End of https://www.gitignore.io/api/scala,eclipse
 
