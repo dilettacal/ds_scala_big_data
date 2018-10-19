@@ -10,6 +10,19 @@ package euler
  */
 class Euler5 {
   
+  /**
+   * Variante mit Primfaktorzerlegung fuer 1->10
+   * 2520
+   * 1 2 3 4 5 6 7 8 9 10
+   * 
+   * 1. Primfaktorzerlegung
+   * 2. Es bleiben folgende Zahlen uebrig:
+   * 1, 2^3, 3^2, 5, 7
+   * 8*9*5*7 = 40*9*7 = 2520 
+   * 
+   */
+  
+  
   def euler20: Int = {
    var i = 1;
  
@@ -30,5 +43,28 @@ class Euler5 {
       x += 20
     }
     return x
+  }
+  
+
+
+  /**def bruteForce(n: Int): Int {
+    var current = 0
+    var isSolved = false
+    while(!isSolved)={
+      current+=1
+      isSolved=true
+      for(i <-1 to n){
+        if(current % i != 0)
+          isSolved = false
+      }
+    }
+   return current
+  }*/
+  
+  
+  def bruteForceFunctional(n: Int): Int = {
+    val range = (1 to n).toArray
+    //(1 to Int.MaxValue).par.find(x => range.forall(i => x%i==0)).get
+    (1 to Int.MaxValue).find(x => range.forall(i => x%i==0)).get
   }
 }
