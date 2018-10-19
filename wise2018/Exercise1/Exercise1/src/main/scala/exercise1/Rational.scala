@@ -17,23 +17,12 @@ class Rational(numerator: Int, denominator: Int) {
     if (numerator / denominator < other.num / other.denom) this else other
   }
 
-  def add(other: Rational): Rational = {
-    //TODO
-    throw new NotImplementedError()
-  }
-
-  def mul(other: Rational): Rational = {
-    //TODO
-    throw new NotImplementedError()
-  }
-
-  def sub(other: Rational): Rational = {
-    //TODO
-    throw new NotImplementedError()
-  }
-
-  def neg(other: Rational): Rational = {
-    //TODO
-    throw new NotImplementedError()
-  }
+  def mul(x:Int): Rational = new Rational(x*numerator,x*denominator)
+  /*
+   * 1/3 + 1/2 = 3*1 + 2*1 /(2*3)
+   */
+  def add(r: Rational): Rational = new Rational(numerator*r.denom + r.num*denominator, denominator*r.denom)
+  def neg: Rational = new Rational(numerator *(-1), denominator)
+  def sub(r: Rational): Rational = add(r.neg)
+  
 }
