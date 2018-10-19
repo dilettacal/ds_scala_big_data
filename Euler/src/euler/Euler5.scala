@@ -1,5 +1,13 @@
 
 
+package euler
+
+
+/**
+ * Implementation of Euler problem 5
+ * Euler project
+ * https://projecteuler.net/problem=5
+ */
 class Euler5 {
   
   def euler20: Int = {

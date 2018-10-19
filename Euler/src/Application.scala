@@ -1,9 +1,6 @@
+import euler.Euler5
 
-/**
- * Implementation of Euler problem 5
- * Euler project
- * https://projecteuler.net/problem=5
- */
+
 object Application {
   
   def main(args: Array[String]): Unit = {
