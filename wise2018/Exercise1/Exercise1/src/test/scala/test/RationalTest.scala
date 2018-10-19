@@ -22,13 +22,13 @@ class RationalTest extends FunSuite {
   }
 
   test("Test add"){
-    //TODO
-    fail()
-  }
+    val x = new Rational(1,4)
+    assert(x.add(x).value === 0.5)
+}
   
   test("Test sub"){
-    //TODO
-    fail()
+    val x = new Rational(1,2)
+    assert(x.sub(x).value === 0.0)
   }
 
   //TODO tests for other methods similar to the above..
