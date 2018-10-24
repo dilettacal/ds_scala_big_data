@@ -11,7 +11,7 @@ object Expressions extends App {
   aVariable +=6 //Side effects
   println(aVariable)
 
-  //Instructions (DO) vs expressions (VALUE)
+  //Instructions (DO) vs expressions (VALUE) - Expression in scala are evaluated, in java executed
 
   // IF expression
   val aCondition = true
