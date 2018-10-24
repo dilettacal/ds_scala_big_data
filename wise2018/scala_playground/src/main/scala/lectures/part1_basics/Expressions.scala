@@ -43,8 +43,16 @@ object Expressions extends App {
     if(z>2) "hello" else "good bye" //Define the type
   }
 
-  //val anotherValue = z +1 //z not visible outside the block
+  val aString2: String = "Hello World"
+  println("hello world") //Unit - expression with side effect
 
+  val someValue: Boolean = {
+    2 < 3
+  }
+
+  val someOtherValue: Int = {
+    if(someValue) 239 else 986
+  }
 
 
 
