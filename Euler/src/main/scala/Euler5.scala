@@ -1,8 +1,5 @@
 
 
-package euler
-
-
 /**
  * Implementation of Euler problem 5
  * Euler project
@@ -66,5 +63,11 @@ class Euler5 {
     val range = (1 to n).toArray
     //(1 to Int.MaxValue).par.find(x => range.forall(i => x%i==0)).get
     (1 to Int.MaxValue).find(x => range.forall(i => x%i==0)).get
+  }
+
+
+  def Euler5_internet(): Int = {
+    Range(20, Int.MaxValue)
+      .find(n => Range(2, 21).forall(n % _ == 0)).get
   }
 }
