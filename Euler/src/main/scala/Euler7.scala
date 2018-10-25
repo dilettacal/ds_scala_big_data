@@ -12,9 +12,9 @@ object Euler7 extends App {
     Iterator.from(num + 1).find(isPrime).get
   }
 
+  //Infinite series of prime numbers starting from 2
   val primes = Iterator.iterate(2)(nextPrimeFrom) //infinite series
   //drop the first 10000 values and take the next
   println(primes.drop(10000).next)
-
-  println(primes.drop(5000).next)
+  //println(primes.drop(5000).next)
 }
