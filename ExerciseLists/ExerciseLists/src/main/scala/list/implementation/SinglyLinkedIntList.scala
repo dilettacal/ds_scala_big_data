@@ -21,12 +21,25 @@ object SinglyLinkedIntList {
     //: _* results in the sequence being passed as multiple parameters - (1,2,3) instead of Seq[Int]{1,2,3}
     case _ => Cons(xs.head, SinglyLinkedIntList(xs.tail: _*))
   }
+
 }
 
 abstract class SinglyLinkedIntList extends IntList {
 
-  override def prefix(other: IntList): IntList = ???
-  override def size: Int = ???
+  override def prefix(other: IntList): IntList = other.isEmpty match {
+    case true => this
+    case false => new Cons(other.head, this.prefix(other.tail))
+  }
+
+  override def size: Int ={
+    def count(elem: IntList): Int = {
+      elem match{
+        case Empty => 0
+        case _ => 1 + count(elem.tail) //mit _ funktioniert das nicht!
+      }
+    }
+    count(this)
+  }
 
   //Uebung 4
   override def append(elem:Int): IntList = this match {
