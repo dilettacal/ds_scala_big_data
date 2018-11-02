@@ -1,7 +1,7 @@
 import euler.Euler5
 
 
-object Application {
+object Application{
   
   def main(args: Array[String]): Unit = {
      val euler20 = new Euler5()

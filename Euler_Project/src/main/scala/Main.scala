@@ -1,5 +1,9 @@
+import euler.Euler7
 
 
-object Euler5 extends App {
+object Main extends App {
   println("Hello, Scala")
+  val euler7 = new Euler7
+
+  println(euler7.isPrime(10001))
 }
