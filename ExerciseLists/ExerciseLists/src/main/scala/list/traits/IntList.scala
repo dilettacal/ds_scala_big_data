@@ -83,7 +83,8 @@ trait IntList {
   def deleteAll(elem: Int): IntList
 
   /**
-    * Return a new list which contains all elements of other followed by all elements of this.
+    * Return a new list which contains all elements
+    * of other followed by all elements of this.
     *
     * @param other the other list
     * @return a new list, with the elements of both lists

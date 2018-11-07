@@ -25,8 +25,11 @@ object SinglyLinkedIntList {
 
 abstract class SinglyLinkedIntList extends IntList {
 
-  override def prefix(other: IntList): IntList = ???
-  override def size: Int = ???
+
+  override def size: Int = this match {
+    case Empty => 0
+    case _ => 1 + this.tail.size
+  }
 
   //Uebung 4
   override def append(elem:Int): IntList = this match {
@@ -34,9 +37,10 @@ abstract class SinglyLinkedIntList extends IntList {
     case Cons(head,tail) => Cons(head, tail.append(elem))
   }
 
+  //das kann man sich auch sparen
   override def isEmpty: Boolean = (head.equals(null) && tail.equals(null))
 
-  override def get(index: Int) = 0
+  override def prepend(elem: Int): IntList = Cons(elem, this)
 
   /** ------------------------------------------
     *
@@ -45,11 +49,23 @@ abstract class SinglyLinkedIntList extends IntList {
     * ------------------------------------------ */
 
 
-  override def map(mapFunc: Int => Int): IntList = ???
+  override def map(mapFunc: Int => Int): IntList = this.tail match {
+      //Wenn tail leer, dann haben wir nur head --> Map func auf head
+    case Empty => Cons(mapFunc(this.head), Empty)
+     //wenn nicht leer, dann veraendere head und rekursiver Aufruf im tail
+    case _ => Cons(mapFunc(this.head), tail.map(mapFunc))
+  }
 
-  override def filter(filterFunc: Int => Boolean): IntList = ???
+  override def filter(filterFunc: Int => Boolean): IntList = this match {
+  //https://www.scala-exercises.org/scala_tutorial/lazy_evaluation
+      //Warum???
+    case Empty => this
+    case _ if(filterFunc(this.head)) => Cons(this.head, this.tail.filter(filterFunc))
+    case _ => this.tail.filter(filterFunc)
+  }
 
   override def foldLeft(initial: Int)(reduceFunc: (Int, Int) => Int): Int = ???
+
 
   override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = ???
 

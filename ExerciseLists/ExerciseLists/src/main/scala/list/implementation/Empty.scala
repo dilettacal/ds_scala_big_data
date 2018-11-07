@@ -12,15 +12,14 @@ case object Empty extends SinglyLinkedIntList {
 
   override def get(index: Int) = throw new IndexOutOfBoundsException()
 
-  override def append(elem: Int): IntList = Cons(elem, this)
+  //Hinfuegen beim Empty --> Empty ist kein Emtpy mehr
+  override def append(elem: Int): IntList = new Cons(elem, this)
 
-  override def contains(elem: Int): Boolean = ???
+  override def contains(elem: Int): Boolean = false
 
-  override def prepend(elem: Int): IntList = ???
+  override def delete(elem: Int): IntList = this
 
-  override def delete(elem: Int): IntList = ???
+  override def deleteAll(elem: Int): IntList = this
 
-  override def deleteAll(elem: Int): IntList = ???
-
-  override def prefix(other: IntList): IntList = ???
+  override def prefix(other: IntList): IntList = this
 }
