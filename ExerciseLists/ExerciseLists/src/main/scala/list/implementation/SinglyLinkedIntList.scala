@@ -113,17 +113,20 @@ head:2
   override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this.tail match {
     case Empty => {
       println("(E) Initial " +initial)
-      println("(E) head:" + head)
-      reduceFunc(head, initial)
+      println("(E) head:" + this.head)
+      reduceFunc(this.head, initial)
     }
     case _ => {
       println("Initial " +initial)
-      println("head:" + head)
-      this.tail.foldLeft(reduceFunc(head, initial))(reduceFunc)
+      println("head:" + this.head)
+      this.tail.foldLeft(reduceFunc(this.head, initial))(reduceFunc)
     }
   }
 
-  override def reduceRight(reduceFunc: (Int, Int) => Int): Int = ???
+  override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this.tail match {
+    case Empty => this.head
+    case _ => reduceFunc(this.head.reduceRight(reduceFunc), this.tail)
+  }
 
   override def insertionSort: IntList = ???
 
