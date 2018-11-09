@@ -135,20 +135,9 @@ head:2
     }
   }
 
-  //TODO: Finde eine Loesung :-)
   override def insertionSort: IntList = tail match {
-    case Empty => {
-      println("Empty: " + head)
-      Cons(head, Empty)
-    }
-    case _ => {
-      println("Head: "+ head)
-      print("Tail head "+ tail.head)
-      if (head <= tail.head)
-        Cons(head, tail.insertionSort)
-      else Cons(tail.head, Cons(head, tail.tail))
-
-    }
+    case Empty => this
+    case _ => tail.insertionSort.insertSorted(head)
   }
 
   override def insertSorted(elem: Int): IntList = this match {
