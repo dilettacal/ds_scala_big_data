@@ -64,10 +64,34 @@ abstract class SinglyLinkedIntList extends IntList {
     case _ => this.tail.filter(filterFunc)
   }
 
-  override def foldLeft(initial: Int)(reduceFunc: (Int, Int) => Int): Int = ???
+  //assert(SinglyLinkedIntList(1, 2, 3).foldLeft(5)((x, y) => x + y) === 11)
+  //gegeben eine Liste mit Werten und einem Anfangswert, man will die Elemente paarweise aufsummieren + anfangswert
+  /*
+  Initial 5
+head:1
+Initial 6
+head:2
+(E) Initial 8
+(E) head:3
+   */
+  override def foldLeft(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this.tail match {
+    case Empty => {
+      println("(E) Initial " +initial)
+      println("(E) head:" + head)
+      reduceFunc(initial,head)
+    }
+    case _ => {
+      println("Initial " +initial)
+      println("head:" + head)
+      this.tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
+    }
+  }
 
 
-  override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = ???
+  override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = this.tail match {
+    case Empty => this.head
+    case _ => reduceFunc(this.head, this.tail.reduceLeft(reduceFunc))
+  }
 
   /** ------------------------------------------
     *
@@ -75,9 +99,29 @@ abstract class SinglyLinkedIntList extends IntList {
     *
     * ------------------------------------------ */
 
-  override def forAll(predicateFunc: Int => Boolean): Boolean = ???
+  //Wendet Predikat predicateFunc auf allen Elementen
+  //Returns true, wenn Prädikat für alle gilt
+  override def forAll(predicateFunc: Int => Boolean): Boolean = this.tail match {
+    //Wenn Liste leer ist, dann auf head
+    case Empty => predicateFunc(this.head)
+    //Sonst wird predicateFunct auf tail nur dann angewendet, wenn auf head true liefert
+    case _ => if(predicateFunc(this.head)) tail.forAll(predicateFunc) else false
 
-  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int = ???
+  }
+
+  //Wie foldLeft aber mit umgekehrter Reihenfolge von initial und head
+  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this.tail match {
+    case Empty => {
+      println("(E) Initial " +initial)
+      println("(E) head:" + head)
+      reduceFunc(head, initial)
+    }
+    case _ => {
+      println("Initial " +initial)
+      println("head:" + head)
+      this.tail.foldLeft(reduceFunc(head, initial))(reduceFunc)
+    }
+  }
 
   override def reduceRight(reduceFunc: (Int, Int) => Int): Int = ???
 
