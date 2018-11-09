@@ -136,15 +136,18 @@ head:2
   }
 
   //TODO: Finde eine Loesung :-)
-  override def insertionSort: IntList = this match {
-    case Empty => this
-    case Cons(x,Empty) => this
-   // case _ if(tail.isEmpty) => this
-    case _  => {
-      if(head <= tail.head)
+  override def insertionSort: IntList = tail match {
+    case Empty => {
+      println("Empty: " + head)
+      Cons(head, Empty)
+    }
+    case _ => {
+      println("Head: "+ head)
+      print("Tail head "+ tail.head)
+      if (head <= tail.head)
         Cons(head, tail.insertionSort)
-      else
-        Cons(tail.head, Cons(head, tail.tail))
+      else Cons(tail.head, Cons(head, tail.tail))
+
     }
   }
 
@@ -158,5 +161,8 @@ head:2
     }
   }
 
-  override def foldLeft[A](initial: A)(reduceFunc: (A, Int) => A): A = ???
+  override def foldLeft[A](initial: A)(reduceFunc: (A, Int) => A): A = tail match {
+    case Empty => reduceFunc(initial, head)
+    case _=> tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
+  }
 }
