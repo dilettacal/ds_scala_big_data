@@ -119,7 +119,7 @@ head:2
     case _ => {
       println("Initial " +initial)
       println("head:" + this.head)
-      this.tail.foldLeft(reduceFunc(this.head, initial))(reduceFunc)
+      this.tail.foldRight(reduceFunc(this.head, initial))(reduceFunc)
     }
   }
 
