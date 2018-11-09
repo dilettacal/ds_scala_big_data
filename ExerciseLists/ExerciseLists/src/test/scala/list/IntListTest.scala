@@ -152,7 +152,7 @@ class IntListTest extends FunSuite {
     assert(SinglyLinkedIntList(5, 1, 2, 4, 3).insertionSort == SinglyLinkedIntList(1, 2, 3, 4, 5))
   }
   test("testInsertSorted") {
-    assert(SinglyLinkedIntList(1, 2, 3, 4).insertSorted(5) === SinglyLinkedIntList(1, 2, 3, 4, 5))
+    assert(SinglyLinkedIntList(1, 2, 4, 5).insertSorted(3) === SinglyLinkedIntList(1, 2, 3, 4, 5))
   }
 
   test("testFoldLeft generic") {

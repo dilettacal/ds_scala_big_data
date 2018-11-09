@@ -124,13 +124,39 @@ head:2
   }
 
   override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this.tail match {
-    case Empty => this.head
-    case _ => reduceFunc(this.head.reduceRight(reduceFunc), this.tail)
+    case Empty => {
+      println("Empty:" + this.head)
+      this.head
+    }
+    case _ => {
+      println("Head: " + this.head)
+      println("Test tail: " + this.tail.reduceRight(reduceFunc))
+      reduceFunc(this.head, this.tail.reduceRight(reduceFunc))
+    }
   }
 
-  override def insertionSort: IntList = ???
+  //TODO: Finde eine Loesung :-)
+  override def insertionSort: IntList = this match {
+    case Empty => this
+    case Cons(x,Empty) => this
+   // case _ if(tail.isEmpty) => this
+    case _  => {
+      if(head <= tail.head)
+        Cons(head, tail.insertionSort)
+      else
+        Cons(tail.head, Cons(head, tail.tail))
+    }
+  }
 
-  override def insertSorted(elem: Int): IntList = ???
+  override def insertSorted(elem: Int): IntList = this match {
+    case Empty => Cons(elem, Empty)
+    case _  => {
+      if(elem >= head)
+        Cons(head, tail.insertSorted(elem))
+      else
+        Cons(elem, this)
+    }
+  }
 
   override def foldLeft[A](initial: A)(reduceFunc: (A, Int) => A): A = ???
 }
