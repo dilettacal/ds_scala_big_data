@@ -23,7 +23,7 @@ class ProblemsTest extends FunSuite {
     //40,42,52 even => 12 (6 + 3x2)
     //41, 83 odd => 25 (21 + 2x2)
     val isEvenBetter = Problems.shouldTakeEvenAddresses(SinglyLinkedIntList(40, 41, 42, 52, 83))
-    assert(isEvenBetter === false)
+    assert(isEvenBetter === true)
   }
 
   test("testShouldTakeEvenAddressesExtended") {

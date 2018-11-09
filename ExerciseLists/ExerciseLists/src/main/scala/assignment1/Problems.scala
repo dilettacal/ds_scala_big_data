@@ -46,7 +46,7 @@ object Problems {
     *
     * He has to stop at every address and drop off all the mail for this building,
     * which he computes as an extra 2 distance per address.
-    * Also taking this into account the distance for the addresses {40, 42, 52} will be 6 + 3 = 9
+    * Also taking this into account the distance for the addresses {40, 42, 52} will be 6 + 3x2 = 12
     *
     * The postman starts from one end and goes to the other.
     *
