@@ -13,7 +13,10 @@ object Problems {
     * @param itemWeight weights of the items in grams
     * @return minimum number of bags required
     */
-  def minBagsCount(capacity: Int, itemWeight: IntList): Int = ???
+  def minBagsCount(capacity: Int, itemWeight: IntList): Int = {
+    math.ceil(itemWeight.foldLeft(0)((x, y) => x + y).toFloat / capacity).toInt
+  }
+
 
   /**
     * Given a amount of money and a list of coin values,
@@ -27,8 +30,23 @@ object Problems {
     * @param coins possible coins
     * @return number of possible ways the change can be returned
     */
-  def countChange(money: Int, coins: IntList): Int = ???
+  def countChange(money: Int, coins: IntList): Int = {
+    def count(capacity: Int, changes: IntList): Int = {
+      if(capacity == 0) 1
+      else if (capacity < 0) 0
+      else if (changes.isEmpty && capacity >=1) 0
+      else count(capacity, changes.tail) + count(capacity - changes.head, changes)
+    }
+    count(money, coins.insertionSort)
+  }
 
+  /*
+  * def countChange(amount: Int, coins: List[Int]): Int = coins match {
+  case _ if amount == 0 => 1
+  case h :: t if amount > 0 => countChange(amount - h, h :: t) + countChange(amount, t)
+  case _ => 0
+}
+*/
   /**
     * A postman has a list of delivery addresses, for which he and his colleague are responsible.
     * The addresses they have to visit are split into odd and even - one part for each of them.
@@ -54,8 +72,22 @@ object Problems {
     *
     * @param addresses the address numbers
     * @return the faster path: true if even, false if odd
+    *
+    *         //Example of test (45, 47,51, 42, 41, 36, 52, 43)
+    *         (41, 43, 45,47,51)
+    *         (36,42,52)
     */
-  def shouldTakeEvenAddresses(addresses: IntList): Boolean = ???
+  def shouldTakeEvenAddresses(addresses: IntList): Boolean = {
+    val even = addresses.filter(address => address %2 == 0).insertionSort
+    val odds = addresses.filter(address => address %2 != 0).insertionSort
+    val evenStops = even.size * 2
+    val oddsStops = odds.size * 2
+    val evenDistance = (even.get(even.size-1) - even.get(0)).toFloat/2
+    val oddDistance = (odds.get(odds.size-1) - odds.get(0)).toFloat/2
+    println(evenDistance+evenStops)
+    println(oddDistance+oddsStops)
+    evenDistance+evenStops < oddDistance+oddsStops
+  }
 
 
   //Solving the following problem is optional, as it is a lot harder than the previous ones.

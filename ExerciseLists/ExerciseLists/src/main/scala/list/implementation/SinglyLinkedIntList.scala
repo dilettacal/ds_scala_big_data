@@ -154,4 +154,5 @@ head:2
     case Empty => reduceFunc(initial, head)
     case _=> tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
   }
+
 }
