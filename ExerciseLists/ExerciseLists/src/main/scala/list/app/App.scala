@@ -8,7 +8,7 @@ object App extends App {
   println(x.toFloat)
   println(math.ceil(x.toFloat/10))
 
-  val c = Problems.countChange(10, SinglyLinkedIntList(2,3))
+  val c = Problems.countChange(10, SinglyLinkedIntList(1,2))
   println(c)
 
 }

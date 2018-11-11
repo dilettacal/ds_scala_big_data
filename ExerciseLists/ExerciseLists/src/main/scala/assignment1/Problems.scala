@@ -52,7 +52,7 @@ object Problems {
         change(capacity - changes.head, changes) + change(capacity, changes.tail)
       else 0
     }
-   change(money, coins.insertionSort)
+    change(money, coins.insertionSort)
   }
 
 
