@@ -86,12 +86,18 @@ object Problems {
     *         (36,42,52)
     */
   def shouldTakeEvenAddresses(addresses: IntList): Boolean = {
-    val even = addresses.filter(address => address % 2 == 0).insertionSort
-    val odds = addresses.filter(address => address % 2 != 0).insertionSort
-    val evenStops = even.size * 2
-    val oddsStops = odds.size * 2
-    val evenDistance = (even.get(even.size - 1) - even.get(0)).toFloat / 2
-    val oddDistance = (odds.get(odds.size - 1) - odds.get(0)).toFloat / 2
+    val sortedAddresses = addresses.insertionSort
+    //divide even from odd address numbers
+    val allEvenAddrs = sortedAddresses.filter(address => address % 2 == 0)
+    val allOddsAddrs = sortedAddresses.filter(address => address % 2 != 0)
+    //Stops
+    val evenStops = allEvenAddrs.size * 2
+    val oddsStops = allOddsAddrs.size * 2
+    //Dinstances
+    val evenDistance = (allEvenAddrs.get(allEvenAddrs.size - 1) - allEvenAddrs.get(0)).toFloat / 2
+    val oddDistance = (allOddsAddrs.get(allOddsAddrs.size - 1) - allOddsAddrs.get(0)).toFloat / 2
+
+    //which is faster?
     evenDistance + evenStops <= oddDistance + oddsStops
   }
 
