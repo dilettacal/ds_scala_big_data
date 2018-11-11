@@ -12,15 +12,10 @@ object Problems {
     * @param capacity   the capacity of a bag in kg
     * @param itemWeight weights of the items in grams
     * @return minimum number of bags required
-    *
-    *         math.ceil(itemWeight.foldLeft(0)((x, y) => x + y).toFloat / capacity).toInt
     */
   def minBagsCount(capacity: Int, itemWeight: IntList): Int = {
-    /*def lowBound(capacity: Int, itemWeight: IntList): Int = {
-      itemWeight.foldLeft(0)((x, y) => x + y) / capacity
-    }
-    countChange(capacity, itemWeight.insertionSort) + lowBound(capacity,itemWeight)*/
-    math.ceil(itemWeight.reduceRight((value1, value2) => value1+value2).toFloat / capacity).toInt
+    //syntactic sugar :-)  itemWeight.reduceRight((value1, value2) => value1+value2).toFloat =>itemWeight.reduceRight((_ + _)).toFloat
+    math.ceil(itemWeight.reduceRight((_ + _)).toFloat / capacity).toInt
   }
 
 
