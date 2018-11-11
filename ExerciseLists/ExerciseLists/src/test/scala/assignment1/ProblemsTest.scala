@@ -13,6 +13,14 @@ class ProblemsTest extends FunSuite {
     assert(Problems.countChange(4, SinglyLinkedIntList(1, 2)) === 3)
   }
 
+  test("testCountChange1") {
+    assert(Problems.countChange(1, SinglyLinkedIntList(1, 2)) === 1)
+  }
+
+  test("testCountChange2") {
+    assert(Problems.countChange(10, SinglyLinkedIntList(1, 2)) === 6)
+  }
+
   test("testShouldTakeEvenAddresses") {
     //36,42,52 even => 14 (8 + 3x2)
     //41, 43, 45, 47, 51 odd => 15 (5 + 5x2)

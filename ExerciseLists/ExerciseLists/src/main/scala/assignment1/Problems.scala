@@ -12,9 +12,15 @@ object Problems {
     * @param capacity   the capacity of a bag in kg
     * @param itemWeight weights of the items in grams
     * @return minimum number of bags required
+    *
+    *         math.ceil(itemWeight.foldLeft(0)((x, y) => x + y).toFloat / capacity).toInt
     */
   def minBagsCount(capacity: Int, itemWeight: IntList): Int = {
-    math.ceil(itemWeight.foldLeft(0)((x, y) => x + y).toFloat / capacity).toInt
+    /*def lowBound(capacity: Int, itemWeight: IntList): Int = {
+      itemWeight.foldLeft(0)((x, y) => x + y) / capacity
+    }
+    countChange(capacity, itemWeight.insertionSort) + lowBound(capacity,itemWeight)*/
+    math.ceil(itemWeight.reduceRight((value1, value2) => value1+value2).toFloat / capacity).toInt
   }
 
 
@@ -29,24 +35,26 @@ object Problems {
     * @param money total amount of change to return
     * @param coins possible coins
     * @return number of possible ways the change can be returned
+    *
+    *         def count(capacity: Int, changes: IntList): Int = {
+    *         if(capacity == 0) 1
+    *         else if (capacity < 0) 0
+    *         else if (changes.isEmpty && capacity >=1) 0
+    *         else count(capacity, changes.tail) + count(capacity - changes.head, changes)
+    *         }
+    *         count(money, coins.insertionSort)
+    *         }
     */
   def countChange(money: Int, coins: IntList): Int = {
-    def count(capacity: Int, changes: IntList): Int = {
-      if(capacity == 0) 1
-      else if (capacity < 0) 0
-      else if (changes.isEmpty && capacity >=1) 0
-      else count(capacity, changes.tail) + count(capacity - changes.head, changes)
-    }
-    count(money, coins.insertionSort)
+    if (money == 0)
+      1
+    else if (money > 0 && !coins.isEmpty)
+      countChange(money - coins.head, coins) + countChange(money, coins.tail)
+    else
+      0
   }
 
-  /*
-  * def countChange(amount: Int, coins: List[Int]): Int = coins match {
-  case _ if amount == 0 => 1
-  case h :: t if amount > 0 => countChange(amount - h, h :: t) + countChange(amount, t)
-  case _ => 0
-}
-*/
+
   /**
     * A postman has a list of delivery addresses, for which he and his colleague are responsible.
     * The addresses they have to visit are split into odd and even - one part for each of them.
@@ -78,21 +86,19 @@ object Problems {
     *         (36,42,52)
     */
   def shouldTakeEvenAddresses(addresses: IntList): Boolean = {
-    val even = addresses.filter(address => address %2 == 0).insertionSort
-    val odds = addresses.filter(address => address %2 != 0).insertionSort
+    val even = addresses.filter(address => address % 2 == 0).insertionSort
+    val odds = addresses.filter(address => address % 2 != 0).insertionSort
     val evenStops = even.size * 2
     val oddsStops = odds.size * 2
-    val evenDistance = (even.get(even.size-1) - even.get(0)).toFloat/2
-    val oddDistance = (odds.get(odds.size-1) - odds.get(0)).toFloat/2
-    println(evenDistance+evenStops)
-    println(oddDistance+oddsStops)
-    evenDistance+evenStops < oddDistance+oddsStops
+    val evenDistance = (even.get(even.size - 1) - even.get(0)).toFloat / 2
+    val oddDistance = (odds.get(odds.size - 1) - odds.get(0)).toFloat / 2
+    evenDistance + evenStops <= oddDistance + oddsStops
   }
 
 
   //Solving the following problem is optional, as it is a lot harder than the previous ones.
   // It is not a required part of the assignment, but will make all tests ins ProblemsTest turn green.
-  
+
   /**
     * The postman has recognized, that addresses which are adjacent to the one
     * in front of which he stops with his delivery bike, take less time and
