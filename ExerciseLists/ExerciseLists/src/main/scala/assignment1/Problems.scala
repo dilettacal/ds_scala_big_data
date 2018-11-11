@@ -46,12 +46,13 @@ object Problems {
     *         }
     */
   def countChange(money: Int, coins: IntList): Int = {
-    if (money == 0)
-      1
-    else if (money > 0 && !coins.isEmpty)
-      countChange(money - coins.head, coins) + countChange(money, coins.tail)
-    else
-      0
+    def change(capacity: Int, changes: IntList): Int = {
+      if (capacity == 0) 1
+      else if(capacity > 0 && !changes.isEmpty)
+        change(capacity - changes.head, changes) + change(capacity, changes.tail)
+      else 0
+    }
+   change(money, coins.insertionSort)
   }
 
 
