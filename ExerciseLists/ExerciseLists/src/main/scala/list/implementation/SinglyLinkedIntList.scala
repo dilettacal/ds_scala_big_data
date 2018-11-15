@@ -48,14 +48,6 @@ abstract class SinglyLinkedIntList extends IntList {
     *
     * ------------------------------------------ */
 
-  /*/*this.tail match {
-      //Wenn tail leer, dann haben wir nur head --> Map func auf head
-    case Empty => Cons(mapFunc(this.head), Empty)
-     //wenn nicht leer, dann veraendere head und rekursiver Aufruf im tail
-    case _ => Cons(mapFunc(this.head), tail.map(mapFunc))*/
-
-  }*/
-
   override def map(mapFunc: Int => Int): IntList = this match {
     case Empty => Empty
     case Cons(head, tail) => Cons(mapFunc(head), tail.map(mapFunc))
@@ -69,16 +61,7 @@ abstract class SinglyLinkedIntList extends IntList {
     case Cons(head, tail) => tail.filter(filterFunc)
   }
 
-  //assert(SinglyLinkedIntList(1, 2, 3).foldLeft(5)((x, y) => x + y) === 11)
-  //gegeben eine Liste mit Werten und einem Anfangswert, man will die Elemente paarweise aufsummieren + anfangswert
-  /*
-  Initial 5
-head:1
-Initial 6
-head:2
-(E) Initial 8
-(E) head:3
-   */
+
   override def foldLeft(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this match {
     case Empty => initial
     case Cons(head,tail)=> tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
@@ -99,12 +82,10 @@ head:2
 
   //Wendet Predikat predicateFunc auf allen Elementen
   //Returns true, wenn Prädikat für alle gilt
-  override def forAll(predicateFunc: Int => Boolean): Boolean = tail match {
-    //Wenn Liste leer ist, dann auf head
-    case Empty => predicateFunc(this.head)
-    //Sonst wird predicateFunct auf tail nur dann angewendet, wenn auf head true liefert
-    case _ => if(predicateFunc(this.head)) tail.forAll(predicateFunc) else false
-
+  override def forAll(predicateFunc: Int => Boolean): Boolean = this match {
+    case Empty => true
+   // case Cons(v, Empty) => true
+    case _ => if(predicateFunc(head)) tail.forAll(predicateFunc) else false
   }
 
 
