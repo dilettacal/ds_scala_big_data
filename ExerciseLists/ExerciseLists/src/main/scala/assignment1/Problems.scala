@@ -14,7 +14,7 @@ object Problems {
     * @return minimum number of bags required
     */
   def minBagsCount(capacity: Int, itemWeight: IntList): Int = {
-    //syntactic sugar :-)  itemWeight.reduceRight((value1, value2) => value1+value2).toFloat =>itemWeight.reduceRight((_ + _)).toFloat
+    //syntactic sugar itemWeight.reduceRight((value1, value2) => value1+value2).toFloat =>itemWeight.reduceRight((_ + _)).toFloat
     math.ceil(itemWeight.reduceRight((_ + _)).toFloat / capacity).toInt
   }
 
@@ -39,6 +39,7 @@ object Problems {
     *         }
     *         count(money, coins.insertionSort)
     *         }
+    *
     */
   def countChange(money: Int, coins: IntList): Int = {
     def change(capacity: Int, changes: IntList): Int = {
@@ -94,6 +95,7 @@ object Problems {
     val oddDistance = (allOddsAddrs.get(allOddsAddrs.size - 1) - allOddsAddrs.get(0)).toFloat / 2
 
     //which is faster?
+    //even = pari, odd = dispari!
     evenDistance + evenStops <= oddDistance + oddsStops
   }
 
