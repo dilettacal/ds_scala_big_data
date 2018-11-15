@@ -38,7 +38,7 @@ abstract class SinglyLinkedIntList extends IntList {
   }
 
   //das kann man sich auch sparen
-  override def isEmpty: Boolean = (head.equals(null) && tail.equals(null))
+  //override def isEmpty: Boolean = (head.equals(null) && tail.equals(null))
 
   override def prepend(elem: Int): IntList = Cons(elem, this)
 
@@ -48,20 +48,25 @@ abstract class SinglyLinkedIntList extends IntList {
     *
     * ------------------------------------------ */
 
-
-  override def map(mapFunc: Int => Int): IntList = this.tail match {
+  /*/*this.tail match {
       //Wenn tail leer, dann haben wir nur head --> Map func auf head
     case Empty => Cons(mapFunc(this.head), Empty)
      //wenn nicht leer, dann veraendere head und rekursiver Aufruf im tail
-    case _ => Cons(mapFunc(this.head), tail.map(mapFunc))
+    case _ => Cons(mapFunc(this.head), tail.map(mapFunc))*/
+
+  }*/
+
+  override def map(mapFunc: Int => Int): IntList = this match {
+    case Empty => Empty
+    case Cons(head, tail) => Cons(mapFunc(head), tail.map(mapFunc))
   }
+
 
   override def filter(filterFunc: Int => Boolean): IntList = this match {
   //https://www.scala-exercises.org/scala_tutorial/lazy_evaluation
-      //Warum???
-    case Empty => this
-    case _ if(filterFunc(this.head)) => Cons(this.head, this.tail.filter(filterFunc))
-    case _ => this.tail.filter(filterFunc)
+    case Empty => Empty
+    case Cons(head, tail) if(filterFunc(this.head)) => Cons(head, tail.filter(filterFunc))
+    case Cons(head, tail) => tail.filter(filterFunc)
   }
 
   //assert(SinglyLinkedIntList(1, 2, 3).foldLeft(5)((x, y) => x + y) === 11)
@@ -74,23 +79,16 @@ head:2
 (E) Initial 8
 (E) head:3
    */
-  override def foldLeft(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this.tail match {
-    case Empty => {
-      println("(E) Initial " +initial)
-      println("(E) head:" + head)
-      reduceFunc(initial,head)
-    }
-    case _ => {
-      println("Initial " +initial)
-      println("head:" + head)
-      this.tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
-    }
+  override def foldLeft(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this match {
+    case Empty => initial
+    case Cons(head,tail)=> tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
   }
 
 
-  override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = this.tail match {
-    case Empty => this.head
-    case _ => reduceFunc(this.head, this.tail.reduceLeft(reduceFunc))
+  override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = this match {
+    case Empty => throw new IllegalArgumentException("Empty List")
+    case Cons(v, Empty) => v
+    case Cons(v1, Cons(v2, tail)) => Cons(reduceFunc(v1, v2), tail).reduceLeft(reduceFunc)
   }
 
   /** ------------------------------------------
@@ -101,7 +99,7 @@ head:2
 
   //Wendet Predikat predicateFunc auf allen Elementen
   //Returns true, wenn Prädikat für alle gilt
-  override def forAll(predicateFunc: Int => Boolean): Boolean = this.tail match {
+  override def forAll(predicateFunc: Int => Boolean): Boolean = tail match {
     //Wenn Liste leer ist, dann auf head
     case Empty => predicateFunc(this.head)
     //Sonst wird predicateFunct auf tail nur dann angewendet, wenn auf head true liefert
