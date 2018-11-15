@@ -113,16 +113,10 @@ head:2
     case Cons(head, tail) => tail.foldRight(reduceFunc(head, initial))(reduceFunc)
   }
 
-  override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this.tail match {
-    case Empty => {
-      println("Empty:" + this.head)
-      this.head
-    }
-    case _ => {
-      println("Head: " + this.head)
-      println("Test tail: " + this.tail.reduceRight(reduceFunc))
-      reduceFunc(this.head, this.tail.reduceRight(reduceFunc))
-    }
+  override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this match {
+    case Empty => throw new IllegalArgumentException("Empty List")
+    case Cons(v, Empty) => v
+    case Cons(v1, Cons(v2, tail)) => Cons(reduceFunc(v1,v2), tail).reduceRight(reduceFunc)
   }
 
   override def insertionSort: IntList = tail match {
@@ -140,9 +134,9 @@ head:2
     }
   }
 
-  override def foldLeft[A](initial: A)(reduceFunc: (A, Int) => A): A = tail match {
-    case Empty => reduceFunc(initial, head)
-    case _=> tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
+  override def foldLeft[A](initial: A)(reduceFunc: (A, Int) => A): A = this match {
+    case Empty => initial
+    case Cons(head,tail)=> tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
   }
 
 }
