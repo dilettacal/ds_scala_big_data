@@ -107,18 +107,10 @@ head:2
 
   }
 
-  //Wie foldLeft aber mit umgekehrter Reihenfolge von initial und head
-  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this.tail match {
-    case Empty => {
-      println("(E) Initial " +initial)
-      println("(E) head:" + this.head)
-      reduceFunc(this.head, initial)
-    }
-    case _ => {
-      println("Initial " +initial)
-      println("head:" + this.head)
-      this.tail.foldRight(reduceFunc(this.head, initial))(reduceFunc)
-    }
+
+  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this match {
+    case Empty => initial
+    case Cons(head, tail) => tail.foldRight(reduceFunc(head, initial))(reduceFunc)
   }
 
   override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this.tail match {
