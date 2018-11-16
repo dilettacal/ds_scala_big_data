@@ -30,16 +30,6 @@ object Problems {
     * @param money total amount of change to return
     * @param coins possible coins
     * @return number of possible ways the change can be returned
-    *
-    *         def count(capacity: Int, changes: IntList): Int = {
-    *         if(capacity == 0) 1
-    *         else if (capacity < 0) 0
-    *         else if (changes.isEmpty && capacity >=1) 0
-    *         else count(capacity, changes.tail) + count(capacity - changes.head, changes)
-    *         }
-    *         count(money, coins.insertionSort)
-    *         }
-    *
     */
   def countChange(money: Int, coins: IntList): Int = {
     def change(capacity: Int, changes: IntList): Int = {
