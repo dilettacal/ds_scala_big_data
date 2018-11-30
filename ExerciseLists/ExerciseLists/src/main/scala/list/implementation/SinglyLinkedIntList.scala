@@ -120,4 +120,54 @@ abstract class SinglyLinkedIntList extends IntList {
     case Cons(head,tail)=> tail.foldLeft(reduceFunc(initial,head))(reduceFunc)
   }
 
+  // Uebung 6
+
+  /**
+    * Schreiben Sie eine Funktion reverse, die eine Liste unter Verwendung von foldLeft oder foldRight umdreht
+    * @param I
+    * @tparam T
+    * @return
+    */
+  def reverse[T](I:List[T]): List[T] = I.foldLeft(List(): List[T])((acc,x) => x::acc)
+
+  /**
+    * Schreiben Sie eine FUnktion foldRight unter Verwendung von foldLeft
+    * @param base
+    * @param I
+    * @param f
+    * @tparam A
+    * @tparam B
+    * @return
+    */
+  def foldRight[A,B](base:B, I:List[A])(f:(A,B)=> B): B = I.reverse.foldLeft(base)((b,a) => f(a,b))
+
+
+  /**
+    * Funktion mapReduce mit der folgenden Implementierung. Berechnen Sie mit dieser Funktion für alle Werte der Eingabeliste
+    * die kleinsten Primteiler und addieren Sie diese.
+    * @param mapFun
+    * @param redFun
+    * @param base
+    * @param l
+    * @tparam S
+    * @tparam B
+    * @tparam R
+    * @return
+    */
+  def mapReduce[S,B,R](mapFun: S=> B, redFun: (R,B) => R, base:R, l:List[S]):R = {
+    l.map(mapFun).foldLeft[R](base)(redFun)
+  }
+
+  def findSmallestPrimeDivisor(x:Int, counter:Int): Int = x match {
+    case _ if x < 1 => throw new Error("Negative Number or Zero")
+    case 1 => 1
+    case _ if x % counter == 0 => counter
+    case _ => findSmallestPrimeDivisor(x, counter+1)
+  }
+
+  //Lösung
+  /*def findSmallestPrimDivisorWithMapReduce(x:Int, l:List[Int]) ={
+    mapReduce(x => findSmallestPrimeDivisor(x,2), (x:Int, y:Int) => x +y, 0, l)
+  }*/
+
 }
