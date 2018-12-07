@@ -29,7 +29,6 @@ class Sentiments(sentiFile: String) {
     */
 
   def getDocumentGroupedByCounts(filename: String, wordCount: Int): List[(Int, List[String])] = {
-    println(wordCount)
     val processedFile = Processing.getData(filename) //map
     processedFile.flatMap( //Aus der Mappe nur Wörter extrahieren
       elem =>
@@ -45,10 +44,16 @@ class Sentiments(sentiFile: String) {
 
   }
 
-  def getDocumentSplitByPredicate(filename: String, predicate:String=>Boolean): List[(Int, List[String])] = {
-    ???
+  def getDocumentSplitByPredicate(filename: String, predicate:String=>Boolean): List[(Int, List[String])] = ???
+  /*{
+    val processedFile = Processing.getData(filename) //map
+    processedFile.flatMap( //Aus der Mappe nur Wörter extrahieren
+      elem =>
+        proc.getWords(elem._2))
+        .partition(x => predicate(x))
+      return List(1,List("a"))
   }
-
+*/
   def analyseSentiments(l: List[(Int, List[String])]): List[(Int, Double, Double)] = {
     ???
   }
