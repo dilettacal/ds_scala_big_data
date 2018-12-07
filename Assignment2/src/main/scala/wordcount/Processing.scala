@@ -130,16 +130,29 @@ class Processing {
     * @return
     */
 
+  /*
+  Beispiel:
+  1. Param 1: List of words: List(hello, test)
+  2. Param 2: List of invInd: Map(test -> List(0, 2), this -> List(0, 2), in -> List(2), are -> List(2), is -> List(0, 2), another -> List(2), result -> List(0), it -> List(2), a -> List(0, 2), string -> List(2), also -> List(2), should -> List(0), lot -> List(2), words -> List(0, 2), which -> List(2), be -> List(0), contains -> List(2), of -> List(2), the -> List(0))
+  3. Nur test ist in Zeilen 0,2 enthalten
+  3.1 Rückgabe soll List(0,2) sein
+   */
   def orConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
+    //TODO Change this solution to a better solution!
 
-    words.map(
-      //fuer jedes Wort
-      word => {
-        //ueberpruefe, ob dieses Wort in der Liste invInd enthalten ist
+    //Untersuche Liste words
+    words.map(word => { //mapp die Wörter aus words
+      if (invInd.contains(word)){ //entweder auf die entsprechende Liste (wenn word in words in invInd überhaupt drinnen ist)
+        invInd(word)
       }
-    )
-
+      else List() //oder auf die leere Liste, falls word in invInd nicht enthalten ist
+      //list1 == List(), list2 == List(0,2)
+    }).reduceLeft((list1, list2) => { //Jetzt haben wir: List(List(), List(0,2)) --> List() UNION List(0,2) --> List(0,2)
+      //List() INTERSECT List(0,2) -> List()
+      list1.union(list2)
+    })
   }
+
 
   /**
     * Liefert die Zeilen zurück, die alle Wörter enthalten
@@ -148,7 +161,10 @@ class Processing {
     * @return
     */
   def andConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
-    List(1,2,3)
+    words.map(word =>
+      if(invInd.contains(word)) invInd(word)
+      else List()
+    ).reduceLeft((list1, list2) => list1.intersect(list2))
   }
 }
 
