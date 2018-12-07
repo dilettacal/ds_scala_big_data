@@ -29,7 +29,20 @@ class Sentiments(sentiFile: String) {
     */
 
   def getDocumentGroupedByCounts(filename: String, wordCount: Int): List[(Int, List[String])] = {
-    ???
+    println(wordCount)
+    val processedFile = Processing.getData(filename) //map
+    processedFile.flatMap( //Aus der Mappe nur Wörter extrahieren
+      elem =>
+      proc.getWords(elem._2))
+      .grouped(wordCount) //Wörter nach wordCount gruppieren
+      .zipWithIndex //der neuen Liste wird ein Index angehangen
+      .map{
+          x => {
+            println("X: " + x) //wordcount=5 --> (List(call, me, ishmael, some, years),0)
+            (x._2+1, x._1) //(List(1, (call, me, ishmael, some, years))
+          }
+      }.toList
+
   }
 
   def getDocumentSplitByPredicate(filename: String, predicate:String=>Boolean): List[(Int, List[String])] = {

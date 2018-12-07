@@ -48,6 +48,9 @@ object App {
     val l1 = List()
     val l2 = List(1,2)
     println(l1.union(l2))
+
+
+
   }
 
   def showAnalysisPerSegment(n: Int, fileName: String): Unit = {
