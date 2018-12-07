@@ -91,20 +91,64 @@ class Processing {
    *********************************************************************************************
   */
 
+  /**
+    * Die methode extrahiert alle Wörter aus dem Parameter znd liefert ergebnis.
+    * @param l List in der Form (Zeilennr., Zeilentext)
+    * @return Liste aus Tupeln mit (Zeilennr und Wort)
+    */
   def getAllWordsWithIndex(l: List[(Int, String)]): List[(Int, String)] = {
-    ???
+    l
+      .flatMap(rowNr_text =>
+        getWords(rowNr_text._2)
+       //Tokenization + Stopwords entfernen
+      .map(
+        (rowNr_text._1, _)
+      )) //Mapping der Wörter auf die Indizes - welcher Tupel gehört das Wort?
+
+    //Beispielergebnis: List((0,this), (0,is), (0,a), (0,test), (0,the), (0,result),...)
   }
 
+  /**
+    * List: (zeilennr, word) - s.o.
+    * InverseIndex: word --> line_nr
+    * beispiel:
+    *   Hello -> [1,2,13]
+    *   Für jedes Wort sollen die Zeilen ermittelt werden, in denen das Wort vorkommt und sie als Liste von Wort,[Zeilen] zurückgegeben werden
+    * @param l
+    * @return
+    */
   def createInverseIndex(l: List[(Int, String)]): Map[String, List[Int]] = {
-    ???
+      l.foldLeft(Map[String, List[Int]]())((list, word_linenr) =>{
+        list.updated(word_linenr._2, word_linenr._1 :: list.getOrElse(word_linenr._2, List()))
+    }).mapValues(l => l.reverse) //reverse notwendig, sonst: (this, (2,0)) statt (this, (0,2))
   }
+
+  /**
+    * Liefert die Zeilen zurück, in denen mindenstens ein Wort aus der Liste enthalten ist
+    * @param words
+    * @param invInd
+    * @return
+    */
 
   def orConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
-    ???
+
+    words.map(
+      //fuer jedes Wort
+      word => {
+        //ueberpruefe, ob dieses Wort in der Liste invInd enthalten ist
+      }
+    )
+
   }
 
+  /**
+    * Liefert die Zeilen zurück, die alle Wörter enthalten
+    * @param words
+    * @param invInd
+    * @return
+    */
   def andConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
-    ???
+    List(1,2,3)
   }
 }
 

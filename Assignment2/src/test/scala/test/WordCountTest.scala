@@ -83,7 +83,7 @@ class WordCountTest extends FunSuite{
   test("count Words MapReduce"){
     
     new teststrings{
-    
+
        val result= proc.countWordsMR(proc.getAllWords(test_list))
        assert (result.length===19)
        assert (result.sorted===wordOccurences)
@@ -91,10 +91,10 @@ class WordCountTest extends FunSuite{
   }
   
   test("get All Words Extraction with Indizees"){
-    
     new teststrings{
-    
        val result= proc.getAllWordsWithIndex(test_list)
+      //List((0,This 88 is! a,Test! The result !!!should be: 9 Words), (1,), (2,This is another test. It contains a lot of words which are also in string 1.), (3,))
+      println(result)
        assert (result.length===24)
        assert (result.sorted===wordsWithIndex)
     }
