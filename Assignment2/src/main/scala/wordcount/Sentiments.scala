@@ -55,7 +55,26 @@ class Sentiments(sentiFile: String) {
   }
 */
   def analyseSentiments(l: List[(Int, List[String])]): List[(Int, Double, Double)] = {
-    ???
+
+    //Erzeugt eine Liste, die Abschnitt, Sentimentwörter und gesamte Anzahl der Wörter enthält
+    val sentiWordsAndValues = l.foldLeft(List[(Int, List[(String, Int)], Int)]())((list, paragraph) => {
+      list ++ List((paragraph._1, paragraph._2.foldLeft(List[(String, Int)]())((list, word) => sentiments.get(word) match{
+        //Wort wird hingefügt, wenn es ein Sentimentwort ist
+        case Some(elem) => List.concat(list, List((word, sentiments.get(word).last)))
+        //sonst nicht
+        case None => list
+      }), paragraph._2.length))
+
+    })
+
+   //Dieser Teil liefert korrektes Format zurück
+
+    val result = sentiWordsAndValues.foldLeft(List[(Int, Double, Double)]())((list, paragraph) => {
+      val sentiment_values = paragraph._2.foldLeft(List[Int]())((values, word) => word._2 :: values).sum.toDouble / paragraph._2.length.toDouble
+      val rel_words_used = paragraph._2.length.toDouble / paragraph._3.toDouble
+      List.concat(list, List((paragraph._1, sentiment_values, rel_words_used)))
+    })
+    result
   }
 
   /** ********************************************************************************************
