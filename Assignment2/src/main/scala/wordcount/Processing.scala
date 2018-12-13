@@ -9,17 +9,12 @@ class Processing {
    *********************************************************************************************
   */
   def getWords(line:String):List[String]={
-    /*
-     * Extracts all words from a line
-     * 
-     * 1. Removes all characters which are not letters (A-Z or a-z)
-     * 2. Shifts all words to lower case
-     * 3. Extracts all words and put them into a list of strings
-     */
-    val regex = "[^a-zA-Z]"
+    val regex = "[^a-zA-Z]" //Alles was kein Buchstabe ist
     if(line == "")
       return List()
     else
+    //Alles was kein Buchstabe ist wird durch leeres Zeichen ersetzt.
+    //Satz wird zu lowerCase gebracht und es wird dann nach nicht leeren Zeichen gefiltert und zu einer Liste umgewandelt
       line.replaceAll(regex, " ").toLowerCase.split(" ").filter(x => x != "").toList
   } 
   
@@ -45,6 +40,7 @@ class Processing {
      *
      *  Repepetitions should be considered as 1 word
      */
+    println("\nListe: " + l )
     l
       .flatMap(getWords) //Wörter werden aus Liste gezogen
       .groupBy(word => word) //Woerter werden hier gruppiert: z.B.: (lion,List(lion, lion, lion, lion))
@@ -69,14 +65,15 @@ class Processing {
   l.map(mapFun).foldLeft(base)(redFun)
 
   def countWordsMR(l: List[String]): List[(String, Int)] = {
+    println("String: " + l)
   //mapReduce[???,???,???](null,null,null,l)
     //Ergebnis aus MapFunction, Zwischenergebnis, Base
     mapReduce[String, (String, Int), Map[String, Int]](
-      word => (word, 1), //map
-      (wordToCounter, tupleWithWordAndCount)
+      word => (word,1), //map - Ergebnis soll (word, zahl) sein --> Startet bei (word, 1)
+      (countMap, tupleWithWordAndCount)
         => {
-        println("(Counter, Tuple)\n (" + wordToCounter + ", " + tupleWithWordAndCount + ")")
-        wordToCounter.updated(tupleWithWordAndCount._1, 1 + wordToCounter.getOrElse(tupleWithWordAndCount._1, 0))
+        println("(Counter, Tuple) =  (" + countMap + ", " + tupleWithWordAndCount + ")")
+        countMap.updated(tupleWithWordAndCount._1, 1 + countMap.getOrElse(tupleWithWordAndCount._1, 0))
       },
       Map[String,Int](),
       l
@@ -97,13 +94,17 @@ class Processing {
     * @return Liste aus Tupeln mit (Zeilennr und Wort)
     */
   def getAllWordsWithIndex(l: List[(Int, String)]): List[(Int, String)] = {
+    println("getAllWordsWithIndex")
+    println("Liste: "+ l)
+    //List((0,This 88 is! a,Test! The result !!!should be: 9 Words), (1,), (2,This is another test. It contains a lot of words which are also in string 1.), (3,))
     l
-      .flatMap(rowNr_text =>
-        getWords(rowNr_text._2)
+      .flatMap(tuple =>
+        getWords(tuple._2)
        //Tokenization + Stopwords entfernen
       .map(
-        (rowNr_text._1, _)
-      )) //Mapping der Wörter auf die Indizes - welcher Tupel gehört das Wort?
+          //Mapping der Wörter auf die Indizes - welcher Tupel gehört das Wort
+          (tuple._1, _)
+      ))
 
     //Beispielergebnis: List((0,this), (0,is), (0,a), (0,test), (0,the), (0,result),...)
   }
@@ -118,9 +119,17 @@ class Processing {
     * @return
     */
   def createInverseIndex(l: List[(Int, String)]): Map[String, List[Int]] = {
-      l.foldLeft(Map[String, List[Int]]())((list, word_linenr) =>{
-        list.updated(word_linenr._2, word_linenr._1 :: list.getOrElse(word_linenr._2, List()))
-    }).mapValues(l => l.reverse) //reverse notwendig, sonst: (this, (2,0)) statt (this, (0,2))
+    //in quali righe possiamo trovare una parola!
+    println("createInverseIndex")
+    //List((0,this), (0,is), (0,a), (0,test), (0,the), (0,result), (0,should), (0,be), (0,words), (2,this), (2,is), (2,another), (2,test), (2,it), (2,contains),...)
+    println(l)
+    //list= Ergebnis, number = Zeilennummer, wo sich ein Wort befindet
+      l.foldLeft(Map[String, List[Int]]())((map, row) =>{
+        println(map);
+        //row._2 = "hello", row._1 = 0
+        map.updated(row._2, row._1 :: map.getOrElse(row._2, List())); //Hello -> [1,2,13]
+
+      }).mapValues(l => l.reverse) //reverse notwendig, sonst: (this, (2,0)) statt (this, (0,2))
   }
 
   /**
@@ -136,21 +145,28 @@ class Processing {
   2. Param 2: List of invInd: Map(test -> List(0, 2), this -> List(0, 2), in -> List(2), are -> List(2), is -> List(0, 2), another -> List(2), result -> List(0), it -> List(2), a -> List(0, 2), string -> List(2), also -> List(2), should -> List(0), lot -> List(2), words -> List(0, 2), which -> List(2), be -> List(0), contains -> List(2), of -> List(2), the -> List(0))
   3. Nur test ist in Zeilen 0,2 enthalten
   3.1 Rückgabe soll List(0,2) sein
+
+  OR --> UNION, AND --> INTERSECT
    */
   def orConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
-    //TODO Change this solution to a better solution!
-
+    println("orConjunction")
+    println("words:  " + words)
+    println("invIdx: " + invInd)
     //Untersuche Liste words
     words.map(word => { //mapp die Wörter aus words
       if (invInd.contains(word)){ //entweder auf die entsprechende Liste (wenn word in words in invInd überhaupt drinnen ist)
-        invInd(word)
+        invInd(word) //e.g. list(0,2)..
       }
       else List() //oder auf die leere Liste, falls word in invInd nicht enthalten ist
       //list1 == List(), list2 == List(0,2)
     }).reduceLeft((list1, list2) => { //Jetzt haben wir: List(List(), List(0,2)) --> List() UNION List(0,2) --> List(0,2)
       //List() INTERSECT List(0,2) -> List()
+      println("List1 : " + list1)
+      println("List2: " + list2)
+      println("UNION: " + list1.union(list2))
       list1.union(list2)
     })
+
   }
 
 
@@ -161,10 +177,18 @@ class Processing {
     * @return
     */
   def andConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
+    println("andConjunction")
+    println("words:  " + words)
+    println("invIdx: " + invInd)
     words.map(word =>
       if(invInd.contains(word)) invInd(word)
       else List()
-    ).reduceLeft((list1, list2) => list1.intersect(list2))
+    ).reduceLeft((list1, list2) => {
+      println("List1 : " + list1)
+      println("List2: " + list2)
+      println("intersect: " + list1.intersect(list2))
+      list1.intersect(list2)
+    })
   }
 }
 
