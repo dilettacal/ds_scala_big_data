@@ -1,6 +1,6 @@
 package test
 
-import org.scalatest.FunSuite
+import org.scalatest.{FunSuite, Ignore}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import wordcount._
@@ -45,20 +45,9 @@ class SentimentTest extends FunSuite {
         (19,List("it", "almost", "all", "men", "in", "their", "degree", "some", "time", "or")),
         (20,List("other", "cherish", "very", "nearly", "the", "same", "feelings", "towards", "the", "ocean")),
         (21,List("with", "me")))
+    println("\nErgebnis: " + data)
      assert(res===data)
     
-  }
-
-  test("test getDocumentSplitByPredicate"){
-
-    val data= sentiAnalyse.getDocumentSplitByPredicate("PredicateMatch.txt",x=>x.equals("X"))
-   val res=List(
-     (1,List("lorem", "ipsum" ,"dolor", "sit", "amet", "consectetur", "adipiscing", "elit","suspendisse", "aliquet", "quis", "ligula", "nec" ,"tristique")),
-     (2,List("donec","augue","ipsum","mattis", "et", "elit", "vel", "convallis" ,"convallis", "dui")),
-     (3,List("in","hac" ,"habitasse" ,"platea" ,"dictums")))
-    //assert(res.head===data.head)
-    assert(res===data)
-
   }
 
   test("test analyseSentiments"){
@@ -75,4 +64,17 @@ class SentimentTest extends FunSuite {
 
     //sentiAnalyse.createGraph(data.map(X=>(X._1,X._2)))
   }
+
+  test("test getDocumentSplitByPredicate"){
+
+    val data= sentiAnalyse.getDocumentSplitByPredicate("PredicateMatch.txt",x=>x.equals("X"))
+    val res=List(
+      (1,List("lorem", "ipsum" ,"dolor", "sit", "amet", "consectetur", "adipiscing", "elit","suspendisse", "aliquet", "quis", "ligula", "nec" ,"tristique")),
+      (2,List("donec","augue","ipsum","mattis", "et", "elit", "vel", "convallis" ,"convallis", "dui")),
+      (3,List("in","hac" ,"habitasse" ,"platea" ,"dictums")))
+    //assert(res.head===data.head)
+    assert(res===data)
+
+  }
+
 }

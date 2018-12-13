@@ -30,9 +30,11 @@ class Sentiments(sentiFile: String) {
 
   def getDocumentGroupedByCounts(filename: String, wordCount: Int): List[(Int, List[String])] = {
     val processedFile = Processing.getData(filename) //map
+    println("FILE: " + processedFile)
+    //List((0,Call me Ishmael. Some years ago--never mind how long precisely--having), (1,little or no money in my purse, and nothing particular to interest me on), ....
     processedFile.flatMap( //Aus der Mappe nur Wörter extrahieren
       elem =>
-      proc.getWords(elem._2))
+      proc.getWords(elem._2)) //0, (call, me, Ishmael, some, ..)
       .grouped(wordCount) //Wörter nach wordCount gruppieren
       .zipWithIndex //der neuen Liste wird ein Index angehangen
       .map{
@@ -58,9 +60,10 @@ class Sentiments(sentiFile: String) {
 
     //Erzeugt eine Liste, die Abschnitt, Sentimentwörter und gesamte Anzahl der Wörter enthält
     val sentiWordsAndValues = l.foldLeft(List[(Int, List[(String, Int)], Int)]())((list, paragraph) => {
-      list ++ List((paragraph._1, paragraph._2.foldLeft(List[(String, Int)]())((list, word) => sentiments.get(word) match{
+      list++List((paragraph._1, paragraph._2.foldLeft(List[(String, Int)]())((list, word) =>
+        sentiments.get(word) match{
         //Wort wird hingefügt, wenn es ein Sentimentwort ist
-        case Some(elem) => List.concat(list, List((word, sentiments.get(word).last)))
+        case Some(elem) => List.concat(list, List((word, sentiments.get(word).last))) //NoSuchElementException
         //sonst nicht
         case None => list
       }), paragraph._2.length))
