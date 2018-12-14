@@ -15,7 +15,7 @@ class Processing {
     else
     //Alles was kein Buchstabe ist wird durch leeres Zeichen ersetzt.
     //Satz wird zu lowerCase gebracht und es wird dann nach nicht leeren Zeichen gefiltert und zu einer Liste umgewandelt
-      line.replaceAll(regex, " ").toLowerCase.split(" ").filter(x => x != "").toList
+      line.replaceAll(regex, " ").toLowerCase.split(" ").filter(x => x != "").toList //filterNot .isEmpty
   } 
   
   def getAllWords(l:List[(Int,String)]):List[String]={
@@ -30,7 +30,9 @@ class Processing {
      * - Goal: Extracat words from the second content
      * tuple = (int, string) --> tuple._2
      */
-      l.flatMap(tuple => getWords(tuple._2))
+//      l.flatMap(tuple => getWords(tuple._2))
+
+    l.flatMap{case(nr,line)=>getWords(line)}
   }
 
   def countWords(l:List[String]):List[(String,Int)]={
@@ -146,7 +148,8 @@ class Processing {
   3. Nur test ist in Zeilen 0,2 enthalten
   3.1 Rückgabe soll List(0,2) sein
 
-  OR --> UNION, AND --> INTERSECT
+  UNION / OR: A vereinigt mit B ist die Menge aller x für die gilt:
+  x ist Element von A ODER x ist Element von B
    */
   def orConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
     println("orConjunction")
@@ -157,7 +160,7 @@ class Processing {
       if (invInd.contains(word)){ //entweder auf die entsprechende Liste (wenn word in words in invInd überhaupt drinnen ist)
         invInd(word) //e.g. list(0,2)..
       }
-      else List() //oder auf die leere Liste, falls word in invInd nicht enthalten ist
+      else List.empty //oder auf die leere Liste, falls word in invInd nicht enthalten ist
       //list1 == List(), list2 == List(0,2)
     }).reduceLeft((list1, list2) => { //Jetzt haben wir: List(List(), List(0,2)) --> List() UNION List(0,2) --> List(0,2)
       //List() INTERSECT List(0,2) -> List()
@@ -175,6 +178,9 @@ class Processing {
     * @param words
     * @param invInd
     * @return
+    *
+    * INTERSECT / AND: A geschnitten mit B ist die Menge
+    * aller x für die gilt: x ist Element von A UND x ist Element von B
     */
   def andConjunction(words: List[String], invInd: Map[String, List[Int]]): List[Int] = {
     println("andConjunction")
@@ -182,7 +188,7 @@ class Processing {
     println("invIdx: " + invInd)
     words.map(word =>
       if(invInd.contains(word)) invInd(word)
-      else List()
+      else List.empty
     ).reduceLeft((list1, list2) => {
       println("List1 : " + list1)
       println("List2: " + list2)
