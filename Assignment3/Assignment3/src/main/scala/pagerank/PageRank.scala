@@ -46,7 +46,16 @@ object PageRank {
   /**
     * Computes the contributions from the given ranks and links.
     *
-    * See the tests and the description in the assignment sheet for more information
+    * See the tests and the description in the assignment sheet for more information.
+    *
+    *
+    * HINTs:
+    * join and flatMap might be useful
+    *
+    * - What happens if a page is never linked to? ex. {A->B, B->B}
+    *   make sure that (A,0) is also in the result, so A doesn't get lost
+    *
+    * - also pay attention that A->{} should be treated as A->{A} and contribute (A,1)
     *
     */
   def computeContributions(ranks: RDD[(String, Double)], links: RDD[(String, Set[String])]): RDD[(String, Double)] = {
