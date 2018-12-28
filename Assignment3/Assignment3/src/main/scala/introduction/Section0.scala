@@ -29,7 +29,8 @@ object Section0 {
       * See https://spark.apache.org/docs/latest/rdd-programming-guide.html#initializing-spark
       * for more info about how exactly do this.
       */
-    val sparkContext: SparkContext= ???
+    val sparkContext: SparkContext= new SparkContext(new SparkConf().setAppName(name).setMaster("local"))
+
 
     /**
       * There are a lot of other properties which can be set. You can check them out at
@@ -56,6 +57,8 @@ object Section0 {
       * You won't need to set any of those for your assignment when running it on your own machine.
       * The default ones are good enough.
       */
+    println("Spark context initialized with App-ID: ")
+    print(sparkContext.getConf.getAppId)
   }
 
   def tearDownSparkContext(): Unit = {
