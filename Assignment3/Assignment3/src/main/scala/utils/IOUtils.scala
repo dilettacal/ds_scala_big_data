@@ -1,6 +1,6 @@
 package utils
 
-import org.apache.spark.SparkContext
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
 
 object IOUtils {
@@ -25,7 +25,8 @@ object IOUtils {
     * @example getPath("Test.txt",true) => file:target/scala-2.12/test-classes/"Test.txt"
     */
   private def getPath(path: String, isAResource: Boolean): String = {
-    ???
+    if(isAResource) getClass.getClassLoader.getResource(path).getPath
+    else path
   }
 
   /**
@@ -41,7 +42,11 @@ object IOUtils {
     * https://spark.apache.org/docs/latest/rdd-programming-guide.html#external-datasets
     */
   def RDDFromFile(path: String, isAResource: Boolean = true): RDD[String] = {
-    ???
+    val pathToFile = IOUtils.getPath(path, isAResource)
+   // new SparkContext(new SparkConf().setAppName(pathToFile).setMaster("local")) //Only one SparkContext may be running in this JVM
+    val sc = SparkContext.getOrCreate()
+    sc.textFile(pathToFile)
+
   }
 
   /**
