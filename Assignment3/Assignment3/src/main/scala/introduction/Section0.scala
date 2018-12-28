@@ -58,7 +58,7 @@ object Section0 {
       * The default ones are good enough.
       */
     println("Spark context initialized with App-ID: ")
-    print(sparkContext.getConf.getAppId)
+    println(sparkContext.getConf.getAppId)
   }
 
   def tearDownSparkContext(): Unit = {

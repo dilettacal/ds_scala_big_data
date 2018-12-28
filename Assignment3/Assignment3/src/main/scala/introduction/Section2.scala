@@ -22,6 +22,16 @@ object Section2 {
     val rdd = sc.parallelize(data).map(x => Row(x._1, x._2)).cache()
 
     /**
+      * [a,2]
+      * [a,4]
+      * [a,6]
+      * [a,8]
+      * [a,10]
+      * ...
+      */
+    rdd.take(3).foreach(println)
+
+    /**
       * In the previous section you had the privilege of knowing the type of the rdd.
       * This is however not always the case.
       *
@@ -45,7 +55,9 @@ object Section2 {
     /*If you are unsure how the data looks like, you could print the first entry and check it out*/
     //println(rdd.take(1).head)
 
-    val entriesACount = ???
+    //[a,2], a == 50000
+    val first = rdd.take(1)
+    val entriesACount = rdd.filter(row => row.getString(0).equals("a")).count()
     println(s"c(A) = $entriesACount")
 
     /**
@@ -54,9 +66,14 @@ object Section2 {
       * Hint: this time use map first, to obtain the right data,
       *
       * Make sure that all results look plausible (pay attention to the datatypes)
+      *
+      * 1. val erg1 = map(row => getString(0)) --> Datensatz gruppiert nach Buchstaben
+      * 2. erg1 -> Int(row.getInt(1)) //Wir nehmen die Werte
+      * 3. Aufzaehlen mit countByKey
+      * Alternativ kann man mit reduceByKey wie in section 1 arbeiten
       */
-    val entriesToSums= ???
-    //println(s"Entries to Sums: ${entriesToSums.toList}")
+    val entriesToSums= rdd.map(row => row.getString(0) -> Integer2int(row.getInt(1))).countByKey()
+    println(s"Entries to Sums: ${entriesToSums.toList}")
 
     /**
       * Convert the row rdd back to a (string,int) tuple rdd using the map operation
