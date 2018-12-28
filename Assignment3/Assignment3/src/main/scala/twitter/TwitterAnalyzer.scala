@@ -53,31 +53,27 @@ class TwitterAnalyzer(tData: RDD[Tweet]) {
     * and Ordering.by
     */
   def getTopTenEnglishHashtags: List[(String, Int)] = {
+    //TODO: Kürzer machen?
     /*
     Tweet Text: RT @SammyTellem: sometimes we should be really really grateful...😥💔🙏 http://t.co/oWa9gWsN37
     FlatMap L: List(#pics, #news, #pussy, #youtube)
      */
-    tData.
-      filter(tweet => tweet.lang.equals("en"))
-      .map(tweet => tweet.text)
-      .map(tweetContent =>
-        TwitterAnalyzer.getHashtags(tweetContent)
-      .filter(res => !res.isEmpty) //vermeidet "List()" im nächsten Schritt
-      .flatMap(l => {
-        println("FlatMap L: " + l)//List(#pics, #news, #pussy, #youtube)
-        l
-      })
-      .groupBy(v => {
-        println("GroupBy V: " + v)
-        v
-      })
-      .mapValues(sl => {
-        println("MapValues sl: " + sl)
-        sl.toList.length
-      })
+    tData
+      .filter(tweet => tweet.lang.equals("en")) //Alle en-Tweets
+      .map(tweet => tweet.text) //alle en-Tweet-Texte
+      .map(TwitterAnalyzer.getHashtags) //Alle Hashtags
+      .filter(res => !res.isEmpty) //vermeidet List() im nächsten Schritt
+      .flatMap(hashtag => hashtag) //List(#pics, #news, #pussy, #youtube) - erzeugt eine Liste von Hashtags für jeden Tweet
+      .groupBy(hashtagValue => hashtagValue) //gruppieren nach hashtags
+      //Hash: CompactBuffer(#Badgers, #Badgers, #Badgers, #Badgers, #Badgers)
+      //List("Badgers", 5)
+      .mapValues(hash => hash.toList.length) //aufzaehlen der hastags für jede Gruppe
+      //die 10 besten Hashtags werden zurückgegeben
+      //nach deren Anzahl (Stelle 2)
       .takeOrdered(10)(Ordering[Int].reverse.on(sl => sl._2))
       .toList
   }
+
 }
 
 object TwitterAnalyzer {
