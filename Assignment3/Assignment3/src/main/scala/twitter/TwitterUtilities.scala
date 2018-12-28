@@ -71,10 +71,24 @@ object TwitterUtilities {
 
     val tweet = JsonUtils.parseJson(jsonString)
     tweet match {
-      case Some(map: Map[String, Any]) => ???
+        //Tweet(date: OffsetDateTime, userName: String, text: String, lang: String)
+      case Some(map: Map[String, Any]) =>
+        if (isValidTweetJSON(map))
+          Option(Tweet(
+            getTwitterDate(map("created_at").toString),
+            //Here retrieves all user block
+            map("user").asInstanceOf[Map[String, Any]]("name").toString,
+            map("text").toString,
+            map("lang").toString
+          ))
+        else None
       case None => None
     }
   }
+
+  // //Tweet(date: OffsetDateTime, userName: String, text: String, lang: String)
+  private def isValidTweetJSON(map: Map[String, Any]): Boolean =
+    (map.contains("created_at") && map.contains("user") && map.contains("text") && map.contains("lang"))
 
   def getTwitterDate(date: String): OffsetDateTime = {
     try {

@@ -16,7 +16,8 @@ class ParsingTest extends FunSuiteWithSparkContext {
 
   test("Parsing Test") {
     val tweet = "{\"created_at\":\"Sun Sep 21 15:05:39 +0000 2014\",\"id\":513705624245653505,\"id_str\":\"513705624245653505\",\"text\":\"This is a tweet\",\"truncated\":false,\"user\":{\"id\":2533019970,\"name\":\"donald\"},\"lang\":\"en\"}"
-
+    println(tweet)
+    println((tweet.contains("created_at") && tweet.contains("user") && tweet.contains("text") && tweet.contains("lang")))
     val firstTweet = TwitterUtilities.parse(tweet).head
     assert(firstTweet.date.toString === "2014-09-21T15:05:39Z")
     assert(firstTweet.userName === "donald")
