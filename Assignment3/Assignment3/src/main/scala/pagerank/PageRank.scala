@@ -57,11 +57,56 @@ object PageRank {
     *
     * - also pay attention that A->{} should be treated as A->{A} and contribute (A,1)
     *
+    * val ranks = List(
+    * ("A", 0.5),
+    * ("B", 0.5)
+    * )
+    *
+    * val links = List(
+    * ("A", Set("A", "B")),
+    * ("B", Set.empty[String])
+    * )
+    *
     */
   def computeContributions(ranks: RDD[(String, Double)], links: RDD[(String, Set[String])]): RDD[(String, Double)] = {
-   ???
-  }
+    /**
+      * ranks: (A,0.5)
+      * links: (A,Set(A, B))
+      */
 
+    //Join der beiden Gruppen:
+    //Liste mit PageID (A), Rank von A (0,5) und Verlinkungen Set(A,B) von A nach anderen Seiten
+    //List((A,(0.5,Set(A, B))), (B,(0.5,Set())))
+    val joinedList =
+    ranks
+      .join(links)
+      .collect()
+      .toList
+
+    //println("Joined Gruppen: " + joinedList)
+
+    val ausgehendeKanten =
+      ranks.join(links).mapValues(links => links._2.size).collect.toList
+    println(ausgehendeKanten)
+
+    //eingehende Kanten?
+    var iters = 2
+    var i = 1
+   // var updatedRanks = ranks
+    println("Links joining ranks: " + links.join(ranks).collect().toList)
+    for (i <- 1 to 2) {
+      val contribs = links.join(ranks).values.flatMap {
+        case (urls, rank) =>
+          //ausgehende Verlinkungen
+          val size = urls.size
+          //Für jede ausgehende Kante wird eine Tupel generiert (url, contributing rank)
+          urls.map(url => (url, rank / size))
+
+      }
+      //updatedRanks = contribs.mapValues()
+      contribs
+    }
+  }
   /**
     *
     * Computes the new ranks from the contributions

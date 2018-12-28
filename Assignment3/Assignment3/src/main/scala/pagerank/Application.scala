@@ -12,8 +12,10 @@ object Application {
 
     //obtain pages
     val pages = IOUtils.RDDFromJsonFile[Page]("StarWars.json")
+    println(pages.take(10).head)
     //obtain links
     val links = PageRank.extractLinksFromPages(pages)
+    println(links.take(10))
 
     //compute page ranks
     val ranks = PageRank.computePageRank(links).collect()

@@ -67,7 +67,7 @@ class TwitterAnalyzer(tData: RDD[Tweet]) {
       .groupBy(hashtagValue => hashtagValue) //gruppieren nach hashtags
       //Hash: CompactBuffer(#Badgers, #Badgers, #Badgers, #Badgers, #Badgers)
       //List("Badgers", 5)
-      .mapValues(hash => hash.toList.length) //aufzaehlen der hastags für jede Gruppe
+      .mapValues(hash => hash.size) //aufzaehlen der hastags für jede Gruppe
       //die 10 besten Hashtags werden zurückgegeben
       //nach deren Anzahl (Stelle 2)
       .takeOrdered(10)(Ordering[Int].reverse.on(sl => sl._2))
