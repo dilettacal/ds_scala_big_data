@@ -16,6 +16,7 @@ class TwitterAnalyzerTest extends FunSuiteWithSparkContext {
     var onlyTweets = twitterData.flatMap(TwitterUtilities.parse).cache
     println(onlyTweets.count)
     TWA = new TwitterAnalyzer(onlyTweets)
+
   }
 
   test("Number of German Tweets") {
