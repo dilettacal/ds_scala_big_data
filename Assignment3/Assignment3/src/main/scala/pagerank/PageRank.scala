@@ -184,7 +184,8 @@ object PageRank {
     *
     **/
   def computeNewRanksFromContributions(contributions: RDD[(String, Double)], tNorm: Double, t: Double): RDD[(String, Double)] = {
-    ???
+    contributions.reduceByKey(_ + _).mapValues(tNorm + (1-t)*_)
+
   }
 
   /**
