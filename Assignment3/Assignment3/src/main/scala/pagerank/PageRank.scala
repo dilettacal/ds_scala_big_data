@@ -53,7 +53,7 @@ object PageRank {
     * join and flatMap might be useful
     *
     * - What happens if a page is never linked to? ex. {A->B, B->B}
-    *   make sure that (A,0) is also in the result, so A doesn't get lost
+    * make sure that (A,0) is also in the result, so A doesn't get lost
     *
     * - also pay attention that A->{} should be treated as A->{A} and contribute (A,1)
     *
@@ -67,8 +67,36 @@ object PageRank {
     * ("B", Set.empty[String])
     * )
     *
+    * A -> {A, B}
+    * B -> {}
+    *
+    * val ranks = List(
+    * ("A", 0.5),
+    * ("B", 0.5)
+    * )
+    *
+    * val links = List(
+    * ("A", Set("A", "B")),
+    * ("B", Set.empty[String])
+    * )
+    *
     */
   def computeContributions(ranks: RDD[(String, Double)], links: RDD[(String, Set[String])]): RDD[(String, Double)] = {
+    println("Starting values for links and ranks")
+    links.foreach(println)
+    ranks.foreach(println)
+
+    //Empty Set() values are set to the corresponding key value
+    val adaptedLinks = links.map(x => {
+      if(x._2.isEmpty)
+        (x._1, Set(x._1))
+      else (x._1, x._2)
+    })
+
+    println("New Links: ")
+    adaptedLinks.foreach(print)
+    println()
+
     /**
       * ranks: (A,0.5)
       * links: (A,Set(A, B))
@@ -79,33 +107,71 @@ object PageRank {
     //List((A,(0.5,Set(A, B))), (B,(0.5,Set())))
     val joinedList =
     ranks
-      .join(links)
+      .join(adaptedLinks)
       .collect()
       .toList
 
-    //println("Joined Gruppen: " + joinedList)
+    println("Joined Start-Gruppen: " + joinedList)
 
     val ausgehendeKanten =
-      ranks.join(links).mapValues(links => links._2.size).collect.toList
-    println(ausgehendeKanten)
+      ranks.join(adaptedLinks).mapValues(adaptedLinks => adaptedLinks._2.size).collect.toList
+    //println(ausgehendeKanten)
 
     //eingehende Kanten?
     var iters = 2
     var i = 1
-   // var updatedRanks = ranks
-    println("Links joining ranks: " + links.join(ranks).collect().toList)
-    for (i <- 1 to 2) {
-      val contribs = links.join(ranks).values.flatMap {
-        case (urls, rank) =>
+    // var updatedRanks = ranks
+    println("Links joining ranks: " + adaptedLinks.join(ranks).collect().toList)
+
+   /* //(0 until 2).foreach(i => {
+    adaptedLinks.join(ranks).values.flatMap {
+        case (urls, rank) =>{
+          urls.foreach(println) //A C B C
+          println(rank)
           //ausgehende Verlinkungen
           val size = urls.size
           //Für jede ausgehende Kante wird eine Tupel generiert (url, contributing rank)
           urls.map(url => (url, rank / size))
+        }
+
+      }*/
+
+
+
+
+    val contributions = adaptedLinks.join(ranks).flatMap{
+
+      case (pageid, (urls, rank)) => {
+        if(pageid.equals(urls)){
+          urls.map(dest => (dest, 0.0))
+        }
+        else{
+          val size = urls.size
+          urls.map(dest => (dest, rank/size))
+        }
 
       }
-      //updatedRanks = contribs.mapValues()
-      contribs
+
     }
+
+    contributions
+
+   /* val contributions = adaptedLinks.join(ranks).flatMap{
+      case (pageid, (urls, rank)) => adaptedLinks.map(dest => dest, rank/urls.size)
+    }
+    val newRanks = contributions.reduceByKey((x, y) => x + y) */
+
+    //.mapValues(v => 0.15 + 0.85*v)
+      //.reduceByKey(_ + _).mapValues(0.15 + 0.85*_)
+
+       //.groupByKey().map(t => (t._1, t._2.sum))
+
+        //.groupByKey().mapValues{
+        //x => x.reduce((a,b) => a*b)
+     // }
+        //.groupByKey().map(t => (t._1, t._2.sum))
+
+    //})
   }
   /**
     *

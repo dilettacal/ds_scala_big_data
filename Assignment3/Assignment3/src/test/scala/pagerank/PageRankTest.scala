@@ -46,7 +46,8 @@ class PageRankTest extends FunSuiteWithSparkContext {
     )
 
     val result = PageRank.computeContributions(ranksRDD, linksRDD).collect()
-
+    println("Expected: " + expected)
+    println("Result: " + result.toList)
     assert(expected === result)
   }
 
@@ -72,6 +73,8 @@ class PageRankTest extends FunSuiteWithSparkContext {
     )
 
     val result = PageRank.computeContributions(ranksRDD, linksRDD).collect()
+    println("Expected: " + expected)
+    println("Result: " + result.toList)
 
     assert(expected === result)
   }
@@ -102,6 +105,9 @@ class PageRankTest extends FunSuiteWithSparkContext {
     )
 
     val result = PageRank.computeContributions(ranksRDD, linksRDD).collect()
+
+    println("Expected: " + expected)
+    println("Result: " + result.toList)
 
     assert(expected === result)
   }
