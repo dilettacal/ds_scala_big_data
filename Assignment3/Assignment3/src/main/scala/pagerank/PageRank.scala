@@ -93,6 +93,13 @@ object PageRank {
       else (x._1, x._2)
     })
 
+    val allNodes = adaptedLinks.map(link => link._1).distinct()
+    println("All Nodes in the Graph: " + allNodes.collect().toList)
+
+    val allInternalNodes = adaptedLinks.map(elem => elem._2)
+    println("Internal Links: " + allInternalNodes.collect().toList)
+
+    println("***********************************")
     println("New Links: ")
     adaptedLinks.foreach(print)
     println()
@@ -117,9 +124,6 @@ object PageRank {
       ranks.join(adaptedLinks).mapValues(adaptedLinks => adaptedLinks._2.size).collect.toList
     //println(ausgehendeKanten)
 
-    //eingehende Kanten?
-    var iters = 2
-    var i = 1
     // var updatedRanks = ranks
     println("Links joining ranks: " + adaptedLinks.join(ranks).collect().toList)
 
