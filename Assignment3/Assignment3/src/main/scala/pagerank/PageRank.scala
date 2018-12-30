@@ -202,6 +202,7 @@ object PageRank {
   //  List((a,(0.5,0.6)), (b,(0.7,0.85)), (c,(0.2,0.8)))
     println(ranks.join(newRanks).collect.toList)
     println(ranks.values.subtract(newRanks.values))
+    //values after join are a tuple of old and new ranks: (0.2, 0.8)
     math.abs(ranks.join(newRanks).mapValues(x => (x._1-x._2)).values.sum())
   }
 
@@ -216,9 +217,47 @@ object PageRank {
     * and all pages, who don't have any links in the form of pageTitle -> Set()
     *
     * For some examples see the test cases
+    *
+    * Ex 1:
+    * val data = List(
+    * Page(1,"A", List("A", "B")),
+    * Page(2,"B", List("A")))
+    *
+    * val expected = Array(
+    * "A" -> Set("A", "B"),
+    * "B" -> Set("A")
+    * )
     */
   def extractLinksFromPages(pages: RDD[Page]): RDD[(String, Set[String])] = {
-   ???
+
+    /**
+      * val adaptedLinks = links.map(x => {
+      * if(x._2.isEmpty)
+      * (x._1, Set(x._1))
+      * else (x._1, x._2)
+      * })
+      *
+      * Page(1,"A", List("A", "B")),
+      */
+    println("Pages: ")
+    val pageTitlesInRDD = pages.map(page => page.title)
+    println(pageTitlesInRDD.collect.toList)
+    val withoutDanglingNodes = pages.map(page => (page.title, (page.links.map(l => l.title).toSet)))
+    println("Not Dangling pages: " + withoutDanglingNodes.collect.toList)
+    val internalLinks = pages.flatMap(page => page.links).map(link => link.title).distinct()
+    println("Internal links: " + internalLinks.collect.toList)
+    val allNodes = pageTitlesInRDD.union(internalLinks).distinct()
+    println("AllNodes: " + allNodes.collect.toList)
+
+
+    //We need to link dangling nodes to Set() and unify them with withoutDanglingNodes
+    val danglingNodes = internalLinks.subtract(pageTitlesInRDD).map(el => (el, Set.empty[String])).distinct()
+
+    println("DanglingNodes: " + danglingNodes.collect.toList)
+    val result =  withoutDanglingNodes.union(danglingNodes).distinct().sortBy(x => x._1)
+    println(result.collect.toList)
+    result
+
   }
 
 }
