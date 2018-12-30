@@ -123,22 +123,6 @@ object PageRank {
     // var updatedRanks = ranks
     println("Links joining ranks: " + adaptedLinks.join(ranks).collect().toList)
 
-   /* //(0 until 2).foreach(i => {
-    adaptedLinks.join(ranks).values.flatMap {
-        case (urls, rank) =>{
-          urls.foreach(println) //A C B C
-          println(rank)
-          //ausgehende Verlinkungen
-          val size = urls.size
-          //Für jede ausgehende Kante wird eine Tupel generiert (url, contributing rank)
-          urls.map(url => (url, rank / size))
-        }
-
-      }*/
-
-
-
-
     val contributions = adaptedLinks.join(ranks).flatMap{
 
       case (pageid, (urls, rank)) => {
@@ -156,22 +140,6 @@ object PageRank {
 
     contributions
 
-   /* val contributions = adaptedLinks.join(ranks).flatMap{
-      case (pageid, (urls, rank)) => adaptedLinks.map(dest => dest, rank/urls.size)
-    }
-    val newRanks = contributions.reduceByKey((x, y) => x + y) */
-
-    //.mapValues(v => 0.15 + 0.85*v)
-      //.reduceByKey(_ + _).mapValues(0.15 + 0.85*_)
-
-       //.groupByKey().map(t => (t._1, t._2.sum))
-
-        //.groupByKey().mapValues{
-        //x => x.reduce((a,b) => a*b)
-     // }
-        //.groupByKey().map(t => (t._1, t._2.sum))
-
-    //})
   }
   /**
     *
