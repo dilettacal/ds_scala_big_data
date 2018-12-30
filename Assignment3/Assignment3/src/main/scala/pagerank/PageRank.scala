@@ -199,7 +199,10 @@ object PageRank {
     *
     **/
   def computeDifference(ranks: RDD[(String, Double)], newRanks: RDD[(String, Double)]): Double = {
-    ???
+  //  List((a,(0.5,0.6)), (b,(0.7,0.85)), (c,(0.2,0.8)))
+    println(ranks.join(newRanks).collect.toList)
+    println(ranks.values.subtract(newRanks.values))
+    math.abs(ranks.join(newRanks).mapValues(x => (x._1-x._2)).values.sum())
   }
 
   /**
