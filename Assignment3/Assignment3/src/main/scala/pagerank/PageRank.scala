@@ -94,6 +94,7 @@ object PageRank {
     })
 
     val allNodes = adaptedLinks.map(link => link._1).distinct()
+
     println("All Nodes in the Graph: " + allNodes.collect().toList)
 
     val allInternalNodes = adaptedLinks.map(elem => elem._2)
@@ -120,6 +121,16 @@ object PageRank {
 
     println("Joined Start-Gruppen: " + joinedList)
 
+    val joinedLinksRanks = adaptedLinks.join(ranks)
+    println("Joined Links-Ranks: " + joinedLinksRanks.collect.toList)
+
+    //
+    val nodesNumber = allNodes.collect().size
+    println("How many nodes: " + nodesNumber)
+    val internalLinks = adaptedLinks.flatMap(value => value._2).collect.toSet
+    val missingLinksToNode = allNodes.collect.toSet.diff(internalLinks).map(value => (value,0.0))
+    //println("FlatMap: " + joinedLinksRanks.flatMap(value => Set(value._2._1)).collect().toList )
+
     val ausgehendeKanten =
       ranks.join(adaptedLinks).mapValues(adaptedLinks => adaptedLinks._2.size).collect.toList
     //println(ausgehendeKanten)
@@ -127,23 +138,24 @@ object PageRank {
     // var updatedRanks = ranks
     println("Links joining ranks: " + adaptedLinks.join(ranks).collect().toList)
 
+    println("Missing: ")
+    println(missingLinksToNode.toList)
+
+    println("Dataset: ")
+    println(adaptedLinks.join(ranks).collect.toList)
     val contributions = adaptedLinks.join(ranks).flatMap{
-
       case (pageid, (urls, rank)) => {
-        if(pageid.equals(urls)){
-          urls.map(dest => (dest, 0.0))
-        }
-        else{
           val size = urls.size
-          urls.map(dest => (dest, rank/size))
-        }
 
+          if(size==0) urls.map(dest => (dest, 1.0))
+          if(size < nodesNumber && missingLinksToNode.toList.contains((pageid,0.0)) || urls.contains(pageid) == false) {
+           // urls.map(dest => (dest, rank/size))
+            urls.map(dest => (dest, rank/size)).union( urls.map(_ => (pageid,0.0)))
+          }
+          else urls.map(dest => (dest, rank/size))
       }
-
     }
-
     contributions
-
   }
   /**
     *
