@@ -148,7 +148,8 @@ object PageRank {
           val size = urls.size
 
           if(size==0) urls.map(dest => (dest, 1.0))
-          if(size < nodesNumber && missingLinksToNode.toList.contains((pageid,0.0)) || urls.contains(pageid) == false) {
+        //not useful: size < nodesNumber && missingLinksToNode.toList.contains((pageid,0.0)) ||
+          if(urls.contains(pageid) == false) {
            // urls.map(dest => (dest, rank/size))
             urls.map(dest => (dest, rank/size)).union( urls.map(_ => (pageid,0.0)))
           }
