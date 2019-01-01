@@ -15,7 +15,6 @@ object PageRank {
     * @param delta minimum value for difference
     * @return pageRanks
     **/
-  var counter = 0
   def computePageRank(links: RDD[(String, Set[String])], t: Double = 0.15, delta: Double = 0.01): RDD[(String, Double)] = {
     val n = links.count()
     val tNorm = t / n
@@ -24,26 +23,21 @@ object PageRank {
     @tailrec
     def inner(ranks: RDD[(String, Double)], links: RDD[(String, Set[String])], tNorm: Double, t: Double, delta: Double)
     : RDD[(String, Double)] = {
-      println("Durchlauf: " + counter)
 
       //compute the contributions
       val contributions = computeContributions(ranks, links)
-      println("Contributions: " + contributions.collect.toList)
 
       //combine same keys and apply teleportation and damping factors after
       val newRanks = computeNewRanksFromContributions(contributions, tNorm, t)
-      println("New Ranks: " + newRanks.collect.toList)
-      //print(newRanks.collect().toList)
 
       val diff = computeDifference(ranks, newRanks)
       println("Diff: " +diff)
       //done, difference is small enough
       if (diff < delta)
         newRanks
-      else{
-        counter = counter+1
+      else
         inner(newRanks, links, tNorm, t, delta)
-      }
+
 
 
     }
@@ -56,7 +50,6 @@ object PageRank {
     *
     * See the tests and the description in the assignment sheet for more information.
     *
-    *
     * HINTs:
     * join and flatMap might be useful
     *
@@ -64,35 +57,8 @@ object PageRank {
     * make sure that (A,0) is also in the result, so A doesn't get lost
     *
     * - also pay attention that A->{} should be treated as A->{A} and contribute (A,1)
-    *
-    * val ranks = List(
-    * ("A", 0.5),
-    * ("B", 0.5)
-    * )
-    *
-    * val links = List(
-    * ("A", Set("A", "B")),
-    * ("B", Set.empty[String])
-    * )
-    *
-    * A -> {A, B}
-    * B -> {}
-    *
-    * val ranks = List(
-    * ("A", 0.5),
-    * ("B", 0.5)
-    * )
-    *
-    * val links = List(
-    * ("A", Set("A", "B")),
-    * ("B", Set.empty[String])
-    * )
-    *
     */
   def computeContributions(ranks: RDD[(String, Double)], links: RDD[(String, Set[String])]): RDD[(String, Double)] = {
-//    println("Starting values for links and ranks")
-//    links.foreach(println)
-//    ranks.foreach(println)
 
     //Empty Set() values are set to the corresponding key value
     val adaptedLinks = links.map(x => {
@@ -101,56 +67,6 @@ object PageRank {
       else (x._1, x._2)
     })
 
-    val allNodes = adaptedLinks.map(link => link._1).distinct()
-
-//    println("All Nodes in the Graph: " + allNodes.collect().toList)
-//
-//    val allInternalNodes = adaptedLinks.map(elem => elem._2)
-//    println("Internal Links: " + allInternalNodes.collect().toList)
-//
-//    println("***********************************")
-//    println("New Links: ")
-//    adaptedLinks.foreach(print)
-//    println()
-
-    /**
-      * ranks: (A,0.5)
-      * links: (A,Set(A, B))
-      */
-
-    //Join der beiden Gruppen:
-    //Liste mit PageID (A), Rank von A (0,5) und Verlinkungen Set(A,B) von A nach anderen Seiten
-    //List((A,(0.5,Set(A, B))), (B,(0.5,Set())))
-//    val joinedList =
-//    ranks
-//      .join(adaptedLinks)
-//      .collect()
-//      .toList
-//
-//    println("Joined Start-Gruppen: " + joinedList)
-//
-//    val joinedLinksRanks = adaptedLinks.join(ranks)
-//    println("Joined Links-Ranks: " + joinedLinksRanks.collect.toList)
-
-    //
-    val nodesNumber = allNodes.collect().size
-    println("How many nodes: " + nodesNumber)
-    val internalLinks = adaptedLinks.flatMap(value => value._2).collect.toSet
-    val missingLinksToNode = allNodes.collect.toSet.diff(internalLinks).map(value => (value,0.0))
-    //println("FlatMap: " + joinedLinksRanks.flatMap(value => Set(value._2._1)).collect().toList )
-
-//    val ausgehendeKanten =
-//      ranks.join(adaptedLinks).mapValues(adaptedLinks => adaptedLinks._2.size).collect.toList
-//    //println(ausgehendeKanten)
-
-    // var updatedRanks = ranks
-    println("Links joining ranks: " + adaptedLinks.join(ranks).collect().toList)
-
-//    println("Missing: ")
-//    println(missingLinksToNode.toList)
-
-    println("Dataset: ")
-    println(adaptedLinks.join(ranks).collect.toList)
     val contributions = adaptedLinks.join(ranks).flatMap{
       case (pageid, (urls, rank)) => {
           val size = urls.size
@@ -178,7 +94,6 @@ object PageRank {
     **/
   def computeNewRanksFromContributions(contributions: RDD[(String, Double)], tNorm: Double, t: Double): RDD[(String, Double)] = {
     contributions.reduceByKey(_ + _).mapValues(tNorm + (1-t)*_)
-
   }
 
   /**
@@ -210,45 +125,17 @@ object PageRank {
     * and all pages, who don't have any links in the form of pageTitle -> Set()
     *
     * For some examples see the test cases
-    *
-    * Ex 1:
-    * val data = List(
-    * Page(1,"A", List("A", "B")),
-    * Page(2,"B", List("A")))
-    *
-    * val expected = Array(
-    * "A" -> Set("A", "B"),
-    * "B" -> Set("A")
-    * )
     */
   def extractLinksFromPages(pages: RDD[Page]): RDD[(String, Set[String])] = {
 
-    /**
-      * val adaptedLinks = links.map(x => {
-      * if(x._2.isEmpty)
-      * (x._1, Set(x._1))
-      * else (x._1, x._2)
-      * })
-      *
-      * Page(1,"A", List("A", "B")),
-      */
-    println("Pages: ")
     val pageTitlesInRDD = pages.map(page => page.title)
-    println(pageTitlesInRDD.collect.toList)
     val withoutDanglingNodes = pages.map(page => (page.title, (page.links.map(l => l.title).toSet)))
-    println("Not Dangling pages: " + withoutDanglingNodes.collect.toList)
     val internalLinks = pages.flatMap(page => page.links).map(link => link.title).distinct()
-    println("Internal links: " + internalLinks.collect.toList)
     val allNodes = pageTitlesInRDD.union(internalLinks).distinct()
-    println("AllNodes: " + allNodes.collect.toList)
-
 
     //We need to link dangling nodes to Set() and unify them with withoutDanglingNodes
     val danglingNodes = internalLinks.subtract(pageTitlesInRDD).map(el => (el, Set.empty[String])).distinct()
-
-    println("DanglingNodes: " + danglingNodes.collect.toList)
     val result =  withoutDanglingNodes.union(danglingNodes).distinct().sortBy(x => x._1)
-    println(result.collect.toList)
     result
 
   }
