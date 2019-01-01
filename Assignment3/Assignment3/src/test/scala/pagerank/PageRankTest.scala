@@ -162,6 +162,9 @@ class PageRankTest extends FunSuiteWithSparkContext {
     val expected = Array(("A", 0.5), ("B", 0.5))
     var dataRdd = sc.parallelize(data)
     var ranks = PageRank.computePageRank(dataRdd, 0).collect()
+    println("Expected: " + expected.toList)
+    println("Result: " + ranks.toList)
+
     assert(ranks === expected)
   }
 
@@ -174,6 +177,8 @@ class PageRankTest extends FunSuiteWithSparkContext {
     val expected = Array(("A", 0.5), ("B", 0.5))
     var dataRdd = sc.parallelize(data)
     var ranks = PageRank.computePageRank(dataRdd).collect()
+    println("Expected: " + expected.toList)
+    println("Result: " + ranks.toList)
     assert(ranks === expected)
   }
 
@@ -187,6 +192,8 @@ class PageRankTest extends FunSuiteWithSparkContext {
     val expected = Array(("A", 0.0), ("B", 1.0))
     var dataRdd = sc.parallelize(data)
     var ranks = PageRank.computePageRank(dataRdd, 0).collect()
+    println("Expected: " + expected.toList)
+    println("Result: " + ranks.toList)
     assert(ranks === expected)
   }
 
@@ -199,6 +206,8 @@ class PageRankTest extends FunSuiteWithSparkContext {
     val expected = Array(("A", 0.075), ("B", 0.925))
     var dataRdd = sc.parallelize(data)
     var ranks = PageRank.computePageRank(dataRdd).collect()
+    println("Expected: " + expected.toList)
+    println("Result: " + ranks.toList)
     assert(ranks === expected)
   }
 
@@ -210,6 +219,8 @@ class PageRankTest extends FunSuiteWithSparkContext {
     val expected = Array(("A", 0.66), ("B", 0.33))
     var dataRdd = sc.parallelize(data)
     var ranks = PageRank.computePageRank(dataRdd, t = 0.0).collect()
+    println("Expected: " + expected.toList)
+    println("Result: " + ranks.toList)
     assert(ranks === expected)
   }
 
@@ -221,6 +232,8 @@ class PageRankTest extends FunSuiteWithSparkContext {
     val expected = Array(("A", 0.65), ("B", 0.35))
     var dataRdd = sc.parallelize(data)
     var ranks = PageRank.computePageRank(dataRdd).collect()
+    println("Expected: " + expected.toList)
+    println("Result: " + ranks.toList)
     assert(ranks === expected)
   }
 

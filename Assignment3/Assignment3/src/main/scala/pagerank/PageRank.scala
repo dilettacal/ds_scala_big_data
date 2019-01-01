@@ -15,6 +15,7 @@ object PageRank {
     * @param delta minimum value for difference
     * @return pageRanks
     **/
+  var counter = 0
   def computePageRank(links: RDD[(String, Set[String])], t: Double = 0.15, delta: Double = 0.01): RDD[(String, Double)] = {
     val n = links.count()
     val tNorm = t / n
@@ -23,21 +24,28 @@ object PageRank {
     @tailrec
     def inner(ranks: RDD[(String, Double)], links: RDD[(String, Set[String])], tNorm: Double, t: Double, delta: Double)
     : RDD[(String, Double)] = {
+      println("Durchlauf: " + counter)
 
       //compute the contributions
       val contributions = computeContributions(ranks, links)
+      println("Contributions: " + contributions.collect.toList)
 
       //combine same keys and apply teleportation and damping factors after
       val newRanks = computeNewRanksFromContributions(contributions, tNorm, t)
-
+      println("New Ranks: " + newRanks.collect.toList)
       //print(newRanks.collect().toList)
 
       val diff = computeDifference(ranks, newRanks)
+      println("Diff: " +diff)
       //done, difference is small enough
       if (diff < delta)
         newRanks
-      else
+      else{
+        counter = counter+1
         inner(newRanks, links, tNorm, t, delta)
+      }
+
+
     }
 
     inner(ranks, links, tNorm, t, delta)
@@ -82,9 +90,9 @@ object PageRank {
     *
     */
   def computeContributions(ranks: RDD[(String, Double)], links: RDD[(String, Set[String])]): RDD[(String, Double)] = {
-    println("Starting values for links and ranks")
-    links.foreach(println)
-    ranks.foreach(println)
+//    println("Starting values for links and ranks")
+//    links.foreach(println)
+//    ranks.foreach(println)
 
     //Empty Set() values are set to the corresponding key value
     val adaptedLinks = links.map(x => {
@@ -95,15 +103,15 @@ object PageRank {
 
     val allNodes = adaptedLinks.map(link => link._1).distinct()
 
-    println("All Nodes in the Graph: " + allNodes.collect().toList)
-
-    val allInternalNodes = adaptedLinks.map(elem => elem._2)
-    println("Internal Links: " + allInternalNodes.collect().toList)
-
-    println("***********************************")
-    println("New Links: ")
-    adaptedLinks.foreach(print)
-    println()
+//    println("All Nodes in the Graph: " + allNodes.collect().toList)
+//
+//    val allInternalNodes = adaptedLinks.map(elem => elem._2)
+//    println("Internal Links: " + allInternalNodes.collect().toList)
+//
+//    println("***********************************")
+//    println("New Links: ")
+//    adaptedLinks.foreach(print)
+//    println()
 
     /**
       * ranks: (A,0.5)
@@ -113,16 +121,16 @@ object PageRank {
     //Join der beiden Gruppen:
     //Liste mit PageID (A), Rank von A (0,5) und Verlinkungen Set(A,B) von A nach anderen Seiten
     //List((A,(0.5,Set(A, B))), (B,(0.5,Set())))
-    val joinedList =
-    ranks
-      .join(adaptedLinks)
-      .collect()
-      .toList
-
-    println("Joined Start-Gruppen: " + joinedList)
-
-    val joinedLinksRanks = adaptedLinks.join(ranks)
-    println("Joined Links-Ranks: " + joinedLinksRanks.collect.toList)
+//    val joinedList =
+//    ranks
+//      .join(adaptedLinks)
+//      .collect()
+//      .toList
+//
+//    println("Joined Start-Gruppen: " + joinedList)
+//
+//    val joinedLinksRanks = adaptedLinks.join(ranks)
+//    println("Joined Links-Ranks: " + joinedLinksRanks.collect.toList)
 
     //
     val nodesNumber = allNodes.collect().size
@@ -131,15 +139,15 @@ object PageRank {
     val missingLinksToNode = allNodes.collect.toSet.diff(internalLinks).map(value => (value,0.0))
     //println("FlatMap: " + joinedLinksRanks.flatMap(value => Set(value._2._1)).collect().toList )
 
-    val ausgehendeKanten =
-      ranks.join(adaptedLinks).mapValues(adaptedLinks => adaptedLinks._2.size).collect.toList
-    //println(ausgehendeKanten)
+//    val ausgehendeKanten =
+//      ranks.join(adaptedLinks).mapValues(adaptedLinks => adaptedLinks._2.size).collect.toList
+//    //println(ausgehendeKanten)
 
     // var updatedRanks = ranks
     println("Links joining ranks: " + adaptedLinks.join(ranks).collect().toList)
 
-    println("Missing: ")
-    println(missingLinksToNode.toList)
+//    println("Missing: ")
+//    println(missingLinksToNode.toList)
 
     println("Dataset: ")
     println(adaptedLinks.join(ranks).collect.toList)
@@ -185,10 +193,10 @@ object PageRank {
     **/
   def computeDifference(ranks: RDD[(String, Double)], newRanks: RDD[(String, Double)]): Double = {
   //  List((a,(0.5,0.6)), (b,(0.7,0.85)), (c,(0.2,0.8)))
-    println(ranks.join(newRanks).collect.toList)
-    println(ranks.values.subtract(newRanks.values))
+    println("Compute difference for: \n" + ranks.collect.toList+"-"+ newRanks.collect.toList)
+    println(ranks.values.subtract(newRanks.values).collect().toList)
     //values after join are a tuple of old and new ranks: (0.2, 0.8)
-    math.abs(ranks.join(newRanks).mapValues(x => (x._1-x._2)).values.sum())
+    ranks.join(newRanks).mapValues(x => math.abs(x._1-x._2)).values.sum()
   }
 
   /**
