@@ -15,7 +15,8 @@ object PageRank {
     * @param delta minimum value for difference
     * @return pageRanks
     **/
-  def computePageRank(links: RDD[(String, Set[String])], t: Double = 0.15, delta: Double = 0.01): RDD[(String, Double)] = {
+  def computePageRank(links: RDD[(String, Set[String])],
+                      t: Double = 0.15, delta: Double = 0.01): RDD[(String, Double)] = {
     val n = links.count()
     val tNorm = t / n
     val ranks = links.mapValues(_ => 1.0 / n)
@@ -63,19 +64,16 @@ object PageRank {
     //Empty Set() values are set to the corresponding key value
     val adaptedLinks = links.map(x => {
       if(x._2.isEmpty)
-        (x._1, Set(x._1))
+        (x._1, Set(x._1)) //A->{A}
       else (x._1, x._2)
     })
 
     val contributions = adaptedLinks.join(ranks).flatMap{
       case (pageid, (urls, rank)) => {
           val size = urls.size
-
           if(size==0) urls.map(dest => (dest, 1.0))
-        //not useful: size < nodesNumber && missingLinksToNode.toList.contains((pageid,0.0)) ||
           if(urls.contains(pageid) == false) {
-           // urls.map(dest => (dest, rank/size))
-            urls.map(dest => (dest, rank/size)).union( urls.map(_ => (pageid,0.0)))
+            urls.map(dest => (dest, rank/size)).union(urls.map(_ => (pageid,0.0)))
           }
           else urls.map(dest => (dest, rank/size))
       }
@@ -92,7 +90,8 @@ object PageRank {
     * multiply the values obtained in the previous step by (1-t) and add tNorm
     *
     **/
-  def computeNewRanksFromContributions(contributions: RDD[(String, Double)], tNorm: Double, t: Double): RDD[(String, Double)] = {
+  def computeNewRanksFromContributions(contributions: RDD[(String, Double)],
+                                       tNorm: Double, t: Double): RDD[(String, Double)] = {
     contributions.reduceByKey(_ + _).mapValues(tNorm + (1-t)*_)
   }
 
@@ -108,8 +107,8 @@ object PageRank {
     **/
   def computeDifference(ranks: RDD[(String, Double)], newRanks: RDD[(String, Double)]): Double = {
   //  List((a,(0.5,0.6)), (b,(0.7,0.85)), (c,(0.2,0.8)))
-    println("Compute difference for: \n" + ranks.collect.toList+"-"+ newRanks.collect.toList)
-    println(ranks.values.subtract(newRanks.values).collect().toList)
+    //println("Compute difference for: \n" + ranks.collect.toList+"-"+ newRanks.collect.toList)
+    //println(ranks.values.subtract(newRanks.values).collect().toList)
     //values after join are a tuple of old and new ranks: (0.2, 0.8)
     ranks.join(newRanks).mapValues(x => math.abs(x._1-x._2)).values.sum()
   }
@@ -127,15 +126,20 @@ object PageRank {
     * For some examples see the test cases
     */
   def extractLinksFromPages(pages: RDD[Page]): RDD[(String, Set[String])] = {
-
+    println(pages.collect().toList)
     val pageTitlesInRDD = pages.map(page => page.title)
+    println("Page titles in RDD:" + pageTitlesInRDD.collect().toList)
     val withoutDanglingNodes = pages.map(page => (page.title, (page.links.map(l => l.title).toSet)))
     val internalLinks = pages.flatMap(page => page.links).map(link => link.title).distinct()
-    val allNodes = pageTitlesInRDD.union(internalLinks).distinct()
+    println("Internal Links: " + internalLinks.collect().toList)
+   // val allNodes = pageTitlesInRDD.union(internalLinks).distinct()
 
     //We need to link dangling nodes to Set() and unify them with withoutDanglingNodes
-    val danglingNodes = internalLinks.subtract(pageTitlesInRDD).map(el => (el, Set.empty[String])).distinct()
+    val danglingNodes = internalLinks.subtract(pageTitlesInRDD)
+      .map(el => (el, Set.empty[String])).distinct() //(C, Set())
+    println("Dangling Nodes: "+ danglingNodes.collect().toList)
     val result =  withoutDanglingNodes.union(danglingNodes).distinct().sortBy(x => x._1)
+    println("Result: " + result.collect().toList)
     result
 
   }
