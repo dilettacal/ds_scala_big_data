@@ -12,7 +12,6 @@ class TwitterAnalyzer(tData: RDD[Tweet]) {
    * Write a function that counts the number of tweets using the german language
    */
   def getGermanTweetsCount: Long = {
-    //eq not working
     tData.filter(_.lang.equals("de")).count()
   }
 
@@ -29,16 +28,16 @@ class TwitterAnalyzer(tData: RDD[Tweet]) {
   def numberOfGermanTweetsPerUser: Array[(String, Int)] = {
     tData
       .filter(_.lang.equals("de"))
-      .groupBy(_.userName)
-      .mapValues(_.toList.length)
-      .collect()
+      .groupBy(_.userName) //unique
+      .mapValues(_.size) //Anzahl der Benutzer
+      .collect
   }
 
   /**
     * Counts the number of tweets per country
     */
   def numberOfTweetsPerCountry: Array[(String, Int)] = {
-    tData.groupBy(tweet => tweet.lang).mapValues(_.toList.length).collect
+    tData.groupBy(tweet => tweet.lang).mapValues(_.size).collect
   }
 
   /**
@@ -53,13 +52,12 @@ class TwitterAnalyzer(tData: RDD[Tweet]) {
     * and Ordering.by
     */
   def getTopTenEnglishHashtags: List[(String, Int)] = {
-    //TODO: Kürzer machen?
     /*
     Tweet Text: RT @SammyTellem: sometimes we should be really really grateful...😥💔🙏 http://t.co/oWa9gWsN37
     FlatMap L: List(#pics, #news, #pussy, #youtube)
      */
     tData
-      .filter(tweet => tweet.lang.equals("en")) //Alle en-Tweets
+      .filter(_.lang.equals("en")) //Alle en-Tweets
       .map(tweet => tweet.text) //alle en-Tweet-Texte
       .map(TwitterAnalyzer.getHashtags) //Alle Hashtags
       .filter(res => !res.isEmpty) //vermeidet List() im nächsten Schritt

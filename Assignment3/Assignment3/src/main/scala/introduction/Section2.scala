@@ -56,7 +56,6 @@ object Section2 {
     //println(rdd.take(1).head)
 
     //[a,2], a == 50000
-    val first = rdd.take(1)
     val entriesACount = rdd.filter(row => row.getString(0).equals("a")).count()
     println(s"c(A) = $entriesACount")
 
@@ -72,7 +71,7 @@ object Section2 {
       * 3. Aufzaehlen mit countByKey
       * Alternativ kann man mit reduceByKey wie in section 1 arbeiten
       */
-    val entriesToSums= rdd.map(row => row.getString(0) -> Integer2int(row.getInt(1))).countByKey()
+    val entriesToSums= rdd.map(row => row.getString(0) -> row.getInt(1)).countByKey()
     println(s"Entries to Sums: ${entriesToSums.toList}")
 
     /**

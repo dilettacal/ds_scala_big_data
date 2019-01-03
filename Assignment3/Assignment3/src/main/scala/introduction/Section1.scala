@@ -54,11 +54,10 @@ object Section1 {
       * - Do all results look plausible? Actually not:
       * Entries to Sums: List((d,714264285), (a,-1794917296), (b,1666683333), (c,1000050000))
       *
-      * - What happens if you omit collect?
+      * - What happens if you omit collect? Ohne collect liefern wir noch ein RDD zurück
       */
       //reduceByKey(_ + _)
     val entriesToSums:Array[(String,Int)] = rdd.reduceByKey((accum, n) => (accum + n)).collect()
-
     println(s"Entries to Sums: ${entriesToSums.toList}")
 
     /**
