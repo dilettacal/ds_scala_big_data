@@ -21,10 +21,14 @@ object Intro extends App{
   println(sumOfSquares(2,4))
   //CBV and CBN
   def first(x:Int, y:Int) = x
-  def loop:Int = loop
+  def loop:Int = {
+    println("Aufruf, loop")
+    loop
+  }
 
+  println("CBV CBN")
   //CBN
- // println(first(5,loop)) //ewige Loop :-)
+  //println(first(5,loop)) //ewige Loop :-)
 
   //Evaluation strategy with =>
   def constOne(x:Int, y: => Int) = 1
