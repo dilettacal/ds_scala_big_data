@@ -159,15 +159,22 @@ abstract class SinglyLinkedIntList extends IntList {
   }
 
   def findSmallestPrimeDivisor(x:Int, counter:Int): Int = x match {
-    case _ if x < 1 => throw new Error("Negative Number or Zero")
-    case 1 => 1
-    case _ if x % counter == 0 => counter
-    case _ => findSmallestPrimeDivisor(x, counter+1)
+      case _ if x < 1 => throw new Error("Negative Number or Zero")
+      case 1 => 1
+      case _ if x % counter == 0 => counter
+      case _ => findSmallestPrimeDivisor(x, counter+1)
+    }
+
+    //Lösung
+    /*def findSmallestPrimDivisorWithMapReduce(x:Int, l:List[Int]) ={
+      mapReduce(x => findSmallestPrimeDivisor(x,2), (x:Int, y:Int) => x +y, 0, l)
+    }*/
+
+
+  def delete(elem:Int): IntList = elem match {
+    case y if(y == head) => new Cons(this.tail.head, this.tail.tail)
+    case _ => tail.delete(elem)
   }
 
-  //Lösung
-  /*def findSmallestPrimDivisorWithMapReduce(x:Int, l:List[Int]) ={
-    mapReduce(x => findSmallestPrimeDivisor(x,2), (x:Int, y:Int) => x +y, 0, l)
-  }*/
 
 }

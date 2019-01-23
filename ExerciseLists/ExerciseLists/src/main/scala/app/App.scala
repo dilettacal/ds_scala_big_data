@@ -2,6 +2,7 @@ package app
 
 import assignment1.Problems
 import list.implementation.{Cons, Empty, SinglyLinkedIntList}
+import list.traits.IntList
 
 object App extends App {
   val list1 = List(1,2,3,5,7,10,13)
@@ -26,4 +27,11 @@ object App extends App {
   println(list1.foldLeft(1)(_ + _))
   println(lits2.foldLeft("z")(_ + _))
   println(lits2.foldRight("z")(_ + _))
+
+  val testList = Cons(3,Cons(4,Cons(10, Cons(6, Empty))))
+  println(testList.delete(10))
+
+
+
+
 }
