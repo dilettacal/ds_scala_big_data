@@ -1,5 +1,3 @@
-package list.implementation
-
 import list.traits.IntList
 
 /**

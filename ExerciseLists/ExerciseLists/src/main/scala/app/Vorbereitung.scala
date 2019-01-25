@@ -16,9 +16,30 @@ object Vorbereitung extends  App {
     }
   }
 
-  val list = Cons(4, Cons(2,Cons(2,Cons(2,Cons(2,Cons(2, Cons(3,Cons(11,Cons(11,Cons(3, Empty))))))))))
+  def flatten(ls: IntList): String = ls match {
+    case Empty => ""
+    case _ => {
+      ls.head.toString + flatten(ls.tail)
+    }
+  }
 
-  println("Result: " + duplicates(list))
+  def flattenToList(ls: IntList): List[Int] = ls match {
+    case Empty => List()
+    case _ => ls.head::flattenToList(ls.tail)
+  }
+
+  def duplicates2(l: IntList) = {
+    val flat = flattenToList(l)
+    flat.groupBy(identity).mapValues(_.size).filter(x => x._2 >= 2)
+  }
+  //Result: 2211
+
+  val list = Cons(4, Cons(2,Cons(2,Cons(2,Cons(2,Cons(2, Cons(3,Cons(11,Cons(11,Cons(3, Empty))))))))))
+  println(flattenToList(list))
+  println("Result: " + duplicates2(list))
+
+  val dup = List(1,1,1,2,3,4,5,5,6,100,101,101,102)
+  println(dup.groupBy(identity).collect{ case (x, List(_,_,_*)) => x.})
 
   val grades = List(
     ("Hans", "Datenbanken", 2.3),
@@ -85,10 +106,12 @@ object Vorbereitung extends  App {
 
 
   //Average
-
+/*
   val listToAvg = List(1,6,14,85,4)
   def avg(sum: Int, list: List[Int]): Double = sum/list.size
-  listToAvg.reduceLeft((0) (sum, x) => sum+x/listToAvg.size))
+  listToAvg.reduceLeft((0) (sum, x) => sum+x/listToAvg.size)) */
+
+
 
 
 }

@@ -1,13 +1,9 @@
 package mapreduce
 
-/**
-  * Uebung 7
-  */
 object BasicOperations {
 
   def mapper[KeyIn, ValueIn, KeyMOut, ValueMOut](mapFun: ((KeyIn, ValueIn)) => List[(KeyMOut, ValueMOut)],
                                                  data: List[(KeyIn, ValueIn)]): List[(KeyMOut, ValueMOut)] = {
-
     data.flatMap(mapFun(_))
   }
 
@@ -33,7 +29,18 @@ object BasicOperations {
    * Die Funktion soll wie unten aufgefuehrt aufgerufen werden koennen.
    */
   def wordCount(text: List[(Int, String)]): List[(String, Int)] = {
-  ???
+    mapReduce[Int, String, String, Int, String, Int](
+      X => {
+        X._2.
+          toLowerCase.
+          replaceAll("[^a-z]+", " ").
+          split(" ").
+          filterNot(_.isEmpty).
+          map(X => (X, 1)).
+          toList
+      },
+      X => List((X._1, X._2.sum)),
+      text)
   }
 
   /*
@@ -45,29 +52,45 @@ object BasicOperations {
    * die an erster Stelle die Zahl enthaelt und an zweiter Stelle die Summe der Primteiler.
    *
    */
-
-  /*def primf(x: Int, teiler: Int = 2): List[Int] = x match {
-
-  }*/
+  def primf(x: Int, teiler: Int = 2): List[Int] = x match {
+    case 1 => Nil
+    case _ if x % teiler == 0 => teiler :: primf(x / teiler, teiler)
+    case _ => primf(x, teiler + 1)
+  }
 
 
   def primTeilerSumme(l: List[Int]): List[(Int, Int)] = {
-   ???
+    val tupleList = l.map(-1 -> _)
+    mapReduce[Int, Int, Int, Int, Int, Int](
+      x => {
+        primf(x._2).
+          map(pf => (x._2, pf))
+      },
+      X => List((X._1, X._2.sum))
+      , tupleList)
   }
 
   /* Schreiben Sie eine Funktion, die für eine Liste von Wörtern alle Anagramme findet
    * Benutzen Sie dafür die MapReduce-Funktion
    */
-
   def findAnagrams(l: List[String]): List[(String, String)] = {
-    ???
+    val newList = l.map { x => (x, "") }
+    mapReduce[String, String, String, String, String, String](
+      X => List((X._1.sorted, X._1)),
+      { case (_, words) =>
+        //(eehtu,List(heute, huete, tuehe))
+        //(_,List(heute,huete,tuehe))
+        List((words.head, words.filterNot(_ == words.head).mkString(",")))
+      },
+      newList
+    )
   }
 
   def main(args: Array[String]): Unit = {
 
     println(wordCount(List((0, "Dies ist ein Test"), (1, "und jetzt kommt noch ein Test!"), (2, "mal schauen, ob es funktioniert"))))
 
-    //println(primf(12))
+    println(primf(12))
     println(primTeilerSumme(List(12, 24, 8, 36)))
     println(findAnagrams(List("otto", "toto", "hans", "haus", "heute", "geist", "huete", "siegt", "tuehe")))
   }
